@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>世界杯预言家：猜胜负，赢好礼</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --pink:      #FF7043;      /* 暖橙红，团队A */
+  --teal:      #00C9A7;      /* 主色青绿 */
+  --teal-dark: #0A7A85;      /* 深青绿，与Hero顶色一致 */
+  --teal-deep: #093550;      /* Hero底色/深色背景 */
+  --blue:      #00A88C;      /* 原蓝改为深青绿 */
+  --gold:      #FFB500;
+  --bg:        #F2F3F7;
+  --card:      #FFFFFF;
+  --text:      #1A1A2E;
+  --muted:     #999;
+  --radius:    16px;
+}
+html, body {
+  width: 100%; min-height: 100%;
+  background: #222;           /* 桌面端两侧留黑 */
+  font-family: -apple-system, 'PingFang SC', sans-serif;
+  color: var(--text);
+}
+#app {
+  width: 390px;               /* 固定手机宽度 */
+  min-height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ===== STATUS BAR + PAGE NAV ===== */
+.status-bar {
+  height: 44px; padding: 14px 16px 0;
+  background: #F5F5F5;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; font-weight: 600; color: #1A1A1A;
+  flex-shrink: 0;
+}
+.sb-time { flex: 1; text-align: center; }
+.sb-right { display: flex; align-items: center; gap: 4px; font-size: 11px; }
+.sb-battery {
+  width: 22px; height: 11px; border: 1.5px solid #1A1A1A; border-radius: 3px;
+  position: relative; margin-left: 2px;
+}
+.sb-battery::after {
+  content: ''; position: absolute; right: -4px; top: 2px;
+  width: 2px; height: 5px; background: #1A1A1A; border-radius: 0 1px 1px 0;
+}
+.sb-battery-fill {
+  position: absolute; left: 1px; top: 1px; bottom: 1px; right: 1px;
+  background: #1A1A1A; border-radius: 1px;
+}
+.page-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 44px; padding: 0 8px;
+  background: #F5F5F5;
+  border-bottom: 1px solid #E0D8CE;
+  flex-shrink: 0; position: relative; z-index: 20;
+}
+.pn-btn {
+  width: 44px; height: 44px; border: none; background: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: #1A1A1A; flex-shrink: 0;
+  padding: 0;
+}
+.pn-btn:active { opacity: .55; }
+.pn-close { font-size: 24px; font-weight: 300; line-height: 1; margin-top: -2px; }
+.pn-more {
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.pn-more span {
+  display: block; width: 4.5px; height: 4.5px; border-radius: 50%;
+  background: #1A1A1A;
+}
+.pn-title {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  font-size: 14px; font-weight: 600; color: #1A1A1A;
+  white-space: nowrap; max-width: 240px;
+  overflow: hidden; text-overflow: ellipsis;
+  pointer-events: none; letter-spacing: 0;
+}
+
+/* ===== HERO BANNER ===== */
+.hero {
+  width: 100%;
+  background: linear-gradient(160deg, #0A7A85 0%, #0E5A6E 40%, #093550 100%);
+  padding: 0 0 36px;
+  position: relative;
+  overflow: hidden;
+}
+.mobile-nav {
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 12px 16px 0;
+  position: relative; z-index: 10;
+}
+.mn-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,255,255,.2); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.25);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: #fff; font-size: 18px; font-weight: 700;
+  flex-shrink: 0;
+}
+.mn-btn:active { background: rgba(255,255,255,.35); }
+.hero-nav { display: none; }
+.hero-title-wrap { text-align: center; padding: 10px 16px 0; }
+.hero-title {
+  font-size: 30px; font-weight: 900; color: #fff;
+  text-shadow: 0 2px 12px rgba(0,0,0,.3); letter-spacing: 1px;
+  line-height: 1.35;
+}
+.hero-sub { font-size: 13px; color: rgba(255,255,255,.7); margin-top: 4px; }
+
+/* 3D bowl illustration (CSS + emoji) */
+.hero-illustration {
+  width: 100%; height: 90px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.hero-bowl {
+  font-size: 52px; line-height: 1;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,.4));
+  animation: floatBowl 3s ease-in-out infinite alternate;
+}
+@keyframes floatBowl { from{transform:translateY(0)} to{transform:translateY(-8px)} }
+.hero-coin { position: absolute; font-size: 20px; animation: floatCoin 2.5s ease-in-out infinite alternate; }
+.hero-coin.c1 { left: 12%; top: 20%; animation-delay: 0s; }
+.hero-coin.c2 { right: 10%; top: 15%; animation-delay: .4s; }
+.hero-coin.c3 { left: 20%; bottom: 10%; animation-delay: .8s; }
+.hero-coin.c4 { right: 18%; bottom: 15%; animation-delay: .2s; }
+@keyframes floatCoin {
+  from { transform: translateY(0) rotate(0deg); }
+  to   { transform: translateY(-10px) rotate(15deg); }
+}
+
+/* ===== COIN BAR ===== */
+.coin-section {
+  margin: -44px 16px 0;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px rgba(0,0,0,.15);
+  position: relative; z-index: 10;
+  overflow: hidden;
+}
+.coin-main {
+  padding: 14px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.coin-left { display: flex; align-items: center; gap: 10px; }
+.coin-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.coin-avatar-default {
+  background: #ECEEF2;
+  color: #B0B5C0; font-size: 22px;
+}
+.coin-nickname { font-size: 15px; font-weight: 700; color: var(--text); }
+.coin-guest-tip { font-size: 15px; font-weight: 600; color: var(--muted); }
+.coin-left-guest { flex: 1; cursor: pointer; }
+.coin-left-guest:active { opacity: .85; }
+.coin-rules-btn {
+  flex-shrink: 0; border: 1px solid #E8EAED; background: #F7F8FA;
+  border-radius: 18px; padding: 7px 14px;
+  font-size: 12px; font-weight: 700; color: var(--text); cursor: pointer;
+}
+.coin-rules-btn:active { opacity: .7; }
+.coin-actions {
+  display: flex;
+  border-top: 1px solid #F0F1F5;
+  background: #FAFBFC;
+}
+.coin-act-btn {
+  flex: 1; position: relative;
+  border: none; background: none;
+  padding: 12px 4px;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  font-size: 13px; font-weight: 600; color: var(--text);
+  cursor: pointer; line-height: 1.2;
+}
+.coin-act-btn:not(:last-child)::after {
+  content: ''; position: absolute; right: 0; top: 22%; bottom: 22%;
+  width: 1px; background: #E4E6EB;
+}
+.coin-act-btn:active { opacity: .65; }
+.coin-act-icon { font-size: 15px; line-height: 1; flex-shrink: 0; }
+.coin-subtitle { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.coin-pts-wrap { text-align: right; }
+.coin-pts-val { font-size: 20px; font-weight: 800; color: var(--text); }
+.coin-pts-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ===== SCROLL BODY ===== */
+.scroll-body {
+  flex: 1; background: var(--bg);
+  padding: 16px 0 32px;
+  overflow-y: auto;
+}
+.scroll-body::-webkit-scrollbar { display: none; }
+
+/* ===== CAROUSEL ===== */
+/* ===== 参与播报：气泡跑马灯 ===== */
+.marquee {
+  margin: 2px 12px 12px;
+  height: 40px;
+  display: flex; align-items: center;
+  overflow: hidden; position: relative;
+}
+.marquee-viewport {
+  flex: 1; overflow: hidden; height: 100%; position: relative;
+  display: flex; align-items: center;
+}
+.marquee-track {
+  display: flex; align-items: center; height: 100%;
+  white-space: nowrap; width: max-content;
+  animation: marqueeScroll 24s linear infinite;
+}
+.marquee:active .marquee-track,
+.marquee-track:hover { animation-play-state: paused; }
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.mq-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-right: 10px;                 /* 气泡间距，配合无缝循环 */
+  padding: 6px 14px 6px 8px;
+  background: #fff;
+  border: 1px solid rgba(0,201,167,.2);
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.07);
+  font-size: 12px; color: #666;
+}
+.mq-avatar {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: linear-gradient(135deg,#667eea,#764ba2);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+.mq-user { font-weight: 700; color: var(--text); }
+.mq-act { color: var(--muted); }
+.mq-hl { color: #C77800; font-weight: 800; }
+
+.carousel-wrap {
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 14px;
+  position: relative;
+}
+.carousel-track {
+  display: flex;
+  flex-direction: row-reverse;  /* 当前卡片靠右，隐藏卡片从左侧露出 */
+  gap: 10px;
+  padding: 0 12px 0 0;          /* 右侧留白 */
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+  user-select: none; -webkit-user-select: none;
+  cursor: grab;
+}
+.carousel-track:active { cursor: grabbing; }
+
+/* ===== MATCH CARD ===== */
+.match-card {
+  flex: 0 0 calc(100% - 52px);  /* 左侧露出约一截另一张卡片 */
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+  overflow: hidden;
+  transition: opacity .3s, transform .3s;
+}
+.match-card.peek {                /* 非当前卡片：缩小并淡化，提示可滑动 */
+  opacity: .6;
+  transform: scale(.96);
+}
+.mc-category {
+  text-align: center; font-size: 12px; font-weight: 600;
+  color: var(--muted); padding: 14px 12px 0;
+  letter-spacing: .2px;
+}
+.mc-deadline {
+  text-align: center; font-size: 14px; font-weight: 800;
+  color: var(--teal-dark);
+  background: rgba(0,201,167,.12);
+  margin: 10px 12px 14px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  letter-spacing: .3px;
+}
+.mc-deadline.ended,
+.mc-deadline.locked {
+  color: #666;
+  background: rgba(26,26,46,.06);
+}
+/* 底部加一点呼吸空间（去掉 footer 后） */
+.match-card { padding-bottom: 6px; }
+.mc-status-tag {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  padding: 2px 10px; border-radius: 10px; margin-left: 6px;
+}
+.mc-status-tag.open { background: rgba(0,201,167,.12); color: var(--teal); }
+.mc-status-tag.locked { background: rgba(150,150,150,.12); color: #888; }
+.mc-status-tag.ended { background: rgba(26,26,46,.08); color: #555; }
+
+/* Teams VS row */
+.teams-vs {
+  display: flex; align-items: center; justify-content: center;
+  gap: 20px; padding: 0 24px 20px;
+}
+.tv-team { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.tv-flag {
+  position: relative;
+  width: 72px; height: 50px; border-radius: 8px;
+  background: #f5f5f5; display: flex; align-items: center; justify-content: center;
+  font-size: 44px; box-shadow: 0 2px 8px rgba(0,0,0,.1);
+  overflow: visible;
+}
+.tv-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.tv-vs { font-size: 20px; font-weight: 900; color: #D0D5E0; letter-spacing: -2px; }
+.tv-vs.draw { color: var(--teal-dark); font-size: 16px; letter-spacing: 0; }
+.tv-team.winner .tv-flag {
+  background: rgba(0,201,167,.12);
+  border: 2px solid var(--teal);
+  box-shadow: 0 2px 12px rgba(0,201,167,.28);
+}
+.tv-team.winner .tv-name { color: var(--teal-dark); font-weight: 800; }
+.tv-team.loser .tv-flag { opacity: .45; }
+.tv-team.loser .tv-name { color: var(--muted); }
+.tv-win-badge {
+  position: absolute; top: -8px; right: -8px;
+  background: var(--teal); color: #fff;
+  font-size: 11px; font-weight: 800; line-height: 1;
+  padding: 3px 7px; border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,201,167,.35);
+}
+
+/* Vote buttons — BEFORE vote */
+.vote-row { display: flex; gap: 8px; padding: 0 12px 6px; }
+.vote-pill-btn {
+  flex: 1; border-radius: 12px; border: none; cursor: pointer;
+  padding: 11px 6px 9px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  transition: transform .12s, box-shadow .12s;
+}
+.vote-pill-btn:active { transform: scale(.96); }
+.vpb-a { background: var(--teal-dark); }   /* 深青绿 */
+.vpb-d { background: var(--teal); }         /* 主色青绿 */
+.vpb-b { background: var(--pink); }         /* 暖橙红 */
+.vpb-name { font-size: 14px; font-weight: 800; color: #fff; }
+.vpb-mult { font-size: 12px; color: rgba(255,255,255,.9); font-weight: 500; }
+
+/* Vote pct row */
+.pct-row { display: flex; gap: 8px; padding: 4px 12px 16px; justify-content: center; }
+.pct-item { flex: 1; text-align: center; font-size: 12px; color: var(--muted); }
+.pct-item.sel-pct { color: var(--text); font-weight: 700; }
+
+/* After vote — revealed */
+.vote-pill-btn.revealed-a { background: rgba(10,122,133,.1); border: 2px solid var(--teal-dark); }
+.vote-pill-btn.revealed-d { background: rgba(0,201,167,.1); border: 2px solid var(--teal); }
+.vote-pill-btn.revealed-b { background: rgba(255,112,67,.1); border: 2px solid var(--pink); }
+.vote-pill-btn.selected-a { background: var(--teal-dark); box-shadow: 0 4px 14px rgba(10,122,133,.4); }
+.vote-pill-btn.selected-d { background: var(--teal); box-shadow: 0 4px 14px rgba(0,201,167,.4); }
+.vote-pill-btn.selected-b { background: var(--pink); box-shadow: 0 4px 14px rgba(255,112,67,.4); }
+.vote-pill-btn.correct-result { background: var(--teal); }
+.vote-pill-btn.revealed-a .vpb-name { color: var(--teal-dark); }
+.vote-pill-btn.revealed-d .vpb-name { color: var(--teal); }
+.vote-pill-btn.revealed-b .vpb-name { color: var(--pink); }
+.vote-pill-btn.revealed-a .vpb-mult,
+.vote-pill-btn.revealed-d .vpb-mult,
+.vote-pill-btn.revealed-b .vpb-mult { color: var(--muted); font-weight: 500; }
+
+/* Card footer */
+.mc-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px 14px; border-top: 1px solid #F2F3F7;
+}
+.mc-footer-link { font-size: 13px; color: var(--muted); cursor: pointer; }
+.mc-footer-ai {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 13px; color: var(--blue); font-weight: 600; cursor: pointer;
+}
+.mc-footer-modify {
+  width: 100%; text-align: center; font-size: 13px; color: var(--blue);
+  background: none; border: none; cursor: pointer; padding: 0 0 14px;
+  text-decoration: underline;
+}
+.not-voted-hint {
+  text-align: center; font-size: 13px; color: var(--muted); padding: 4px 0 14px;
+}
+.modify-link { color: var(--teal-dark) !important; }
+
+/* ===== RESULT STATUS (参与后状态) ===== */
+.result-status {
+  margin: 6px 12px 4px;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.result-status.pending { background: rgba(0,201,167,.10); }
+.result-status.win {
+  background: linear-gradient(135deg, rgba(255,181,0,.16), rgba(255,149,0,.12));
+}
+.result-status.lose { background: rgba(26,26,46,.05); }
+.rs-icon {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.result-status.pending .rs-icon { background: rgba(0,201,167,.18); }
+.result-status.win .rs-icon { background: rgba(255,181,0,.25); }
+.result-status.lose .rs-icon { background: rgba(26,26,46,.08); }
+.rs-info { flex: 1; min-width: 0; }
+.rs-title { font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.3; }
+.result-status.pending .rs-title { color: var(--teal-dark); }
+.result-status.win .rs-title { color: #C77800; }
+.result-status.lose .rs-title { color: #555; }
+.rs-desc { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.35; }
+.rs-desc b { color: var(--text); font-weight: 700; }
+
+/* ===== TOPIC BANNER ===== */
+.topic-banner {
+  position: relative;
+  margin: 6px 12px 12px;
+  height: 150px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  background: #1a2bb5 url('assets/banner-qatar.png') center 18% / cover no-repeat;
+  box-shadow: 0 2px 12px rgba(0,0,0,.12);
+  transition: transform .12s;
+}
+.topic-banner:active { transform: scale(.985); }
+.tb-mask {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(20,36,160,0) 45%, rgba(12,22,90,.55) 100%);
+}
+.tb-content {
+  position: absolute; left: 16px; bottom: 16px; z-index: 2;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+}
+.tb-tag {
+  display: inline-block; background: #E2231A; color: #fff;
+  font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 6px;
+  line-height: 1;
+}
+.tb-title {
+  font-size: 19px; font-weight: 900; color: #fff; letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(0,0,0,.35);
+}
+.tb-arrow {
+  position: absolute; right: 16px; bottom: 18px; z-index: 2;
+  color: #fff; font-size: 30px; font-weight: 300; line-height: 1;
+  opacity: .9;
+}
+
+/* ===== 兑好礼 ===== */
+.gift-card {
+  margin: 0 12px 12px; background: var(--card);
+  border-radius: var(--radius); padding: 14px 12px 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+}
+.gift-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 4px 12px;
+}
+.gift-title { font-size: 16px; font-weight: 800; color: var(--text); }
+.gift-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.gift-item {
+  position: relative; overflow: hidden;
+  border-radius: 12px; cursor: pointer; transition: transform .12s;
+  background: linear-gradient(160deg, #FFF3E0, #FFE0B2);
+  border: 1px solid rgba(0,0,0,.04);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 12px 6px 8px; gap: 6px; min-height: 110px;
+}
+.gift-item:active { transform: scale(.95); }
+.gift-item:nth-child(2) { background: linear-gradient(160deg,#E3F2FD,#BBDEFB); }
+.gift-item:nth-child(3) { background: linear-gradient(160deg,#E8F5E9,#C8E6C9); }
+.gift-item:nth-child(4) { background: linear-gradient(160deg,#FCE4EC,#F8BBD0); }
+.gift-emoji {
+  font-size: 38px; line-height: 1; flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,.12));
+}
+.gift-name {
+  font-size: 12px; font-weight: 800; color: var(--text);
+  text-align: center; line-height: 1.2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+}
+.gift-cost {
+  font-size: 12px; font-weight: 800; color: #C77800;
+  line-height: 1.2;
+}
+
+/* ===== 已选标签 ===== */
+.vpb-tag {
+  display: inline-block; margin-left: 4px;
+  font-size: 10px; font-weight: 800; line-height: 1;
+  padding: 2px 5px; border-radius: 6px;
+  background: rgba(255,255,255,.9); color: var(--teal-dark);
+  vertical-align: middle;
+}
+.vote-pill-btn.selected-a .vpb-tag,
+.vote-pill-btn.selected-d .vpb-tag,
+.vote-pill-btn.selected-b .vpb-tag { background: #fff; }
+
+/* ===== 参与成功弹窗 ===== */
+.modal-mask {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,.5);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.modal-mask.show { opacity: 1; pointer-events: auto; }
+.modal-card {
+  width: 300px; max-width: 86%;
+  background: #fff; border-radius: 20px;
+  padding: 26px 22px 22px; text-align: center;
+  position: relative;
+  transform: scale(.85); transition: transform .28s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+}
+.modal-mask.show .modal-card { transform: scale(1); }
+.modal-close {
+  position: absolute; top: 10px; right: 12px;
+  width: 28px; height: 28px; border: none; background: none;
+  font-size: 22px; font-weight: 300; color: #bbb; cursor: pointer; line-height: 1;
+}
+.modal-emoji { font-size: 48px; line-height: 1; margin-bottom: 12px; }
+.modal-title { font-size: 19px; font-weight: 900; color: var(--text); }
+.modal-sub {
+  font-size: 13px; color: var(--muted); line-height: 1.5;
+  margin: 8px 14px 20px;
+}
+.modal-btn {
+  width: 100%; height: 46px; border: none; border-radius: 23px;
+  background: linear-gradient(90deg, var(--teal), #00A88C);
+  color: #fff; font-size: 16px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,201,167,.35); transition: transform .1s;
+}
+.modal-btn:active { transform: scale(.97); }
+.modal-body {
+  font-size: 14px; color: #555; line-height: 1.65;
+  text-align: left; margin: 14px 0 22px;
+}
+
+/* ===== 竞猜记录弹窗 ===== */
+.records-modal-card {
+  width: 340px; max-width: 92%;
+  background: #fff; border-radius: 20px;
+  padding: 24px 18px 20px;
+  position: relative;
+  transform: scale(.85); transition: transform .28s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+}
+.modal-mask.show .records-modal-card { transform: scale(1); }
+.records-modal-title {
+  font-size: 17px; font-weight: 800; color: var(--text);
+  text-align: center; margin-bottom: 16px;
+}
+.records-list { display: flex; flex-direction: column; gap: 0; }
+.records-item {
+  display: flex; align-items: center;
+  padding: 13px 4px;
+  border-bottom: 1px solid #F0F1F5;
+  font-size: 13px; line-height: 1.4;
+}
+.records-item:last-child { border-bottom: none; }
+.records-match {
+  flex: 1; min-width: 0;
+  font-weight: 700; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.records-time {
+  flex-shrink: 0; width: 88px; text-align: center;
+  color: var(--muted); font-size: 12px;
+}
+.records-result {
+  flex-shrink: 0; width: 52px; text-align: right;
+  font-weight: 700; font-size: 12px;
+}
+.records-result.pending { color: var(--teal-dark); }
+.records-result.win { color: #C77800; }
+.records-result.lose { color: #888; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0);
+  background: rgba(0,0,0,.82); backdrop-filter: blur(10px);
+  border-radius: 16px; padding: 18px 28px; text-align: center; z-index: 999;
+  transition: transform .28s cubic-bezier(.34,1.56,.64,1); min-width: 160px;
+}
+.toast.show { transform: translate(-50%,-50%) scale(1); }
+.t-main { font-size: 38px; font-weight: 900; color: #FFB500; }
+.t-label { font-size: 13px; color: rgba(255,255,255,.75); margin-top: 4px; }
+.t-cold { font-size: 11px; color: #FF9500; margin-top: 5px; display: none; }
+
+/* ===== 状态总览（默认预览） ===== */
+#statesGallery {
+  width: 100%; min-height: 100vh;
+  background: #1a1a1a; padding: 24px 16px 48px;
+}
+.sg-header {
+  max-width: 1200px; margin: 0 auto 24px;
+  text-align: center; color: #fff;
+}
+.sg-title { font-size: 22px; font-weight: 800; letter-spacing: .5px; }
+.sg-sub {
+  font-size: 13px; color: rgba(255,255,255,.55); margin-top: 8px; line-height: 1.6;
+}
+.sg-demo-link {
+  display: inline-block; margin-top: 14px;
+  padding: 8px 18px; border-radius: 20px;
+  background: var(--teal); color: #fff;
+  font-size: 13px; font-weight: 700; text-decoration: none;
+}
+.sg-demo-link:active { opacity: .8; }
+.sg-grid {
+  max-width: 1400px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px 16px;
+}
+@media (max-width: 1024px) {
+  .sg-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px) {
+  .sg-grid { grid-template-columns: repeat(2, 1fr); gap: 12px 10px; }
+  .sg-label { font-size: 11px; }
+}
+.sg-item { display: flex; flex-direction: column; align-items: stretch; min-width: 0; }
+.sg-label {
+  font-size: 12px; font-weight: 700; color: rgba(255,255,255,.9);
+  margin-bottom: 8px; line-height: 1.35;
+}
+.sg-phone {
+  width: 100%;
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0,0,0,.4);
+  background: #000;
+  text-decoration: none;
+  display: block;
+}
+.sg-phone img {
+  display: block; width: 100%; height: auto; vertical-align: top;
+}
+body.gallery-mode #app { display: none; }
+body.gallery-mode .modal-mask,
+body.gallery-mode .toast { display: none !important; }
+body.demo-mode #statesGallery { display: none; }
+.demo-back {
+  display: none; position: fixed; top: 12px; left: 12px; z-index: 1000;
+  padding: 6px 14px; border-radius: 16px;
+  background: rgba(0,0,0,.55); color: #fff;
+  font-size: 12px; font-weight: 700; text-decoration: none;
+  backdrop-filter: blur(6px);
+}
+body.demo-mode .demo-back { display: block; }
+</style>
+</head>
+<body>
+<a class="demo-back" href="worldcup-predictor.html">← 返回状态总览</a>
+<div id="statesGallery">
+  <div class="sg-header">
+    <div class="sg-title">世界杯预言家 · 全部状态预览</div>
+    <div class="sg-sub">共 9 种完整页面截图，一行多个排列<br>点击图片可新窗口打开原图</div>
+    <a class="sg-demo-link" href="?demo=1">进入交互演示 →</a>
+  </div>
+  <div class="sg-grid" id="sgGrid"></div>
+</div>
+
+<div id="app">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar" aria-hidden="true">
+    <span class="sb-left">9:40</span>
+    <span class="sb-time"></span>
+    <span class="sb-right">
+      <span>100%</span>
+      <span class="sb-battery"><span class="sb-battery-fill"></span></span>
+    </span>
+  </div>
+
+  <!-- PAGE NAV -->
+  <nav class="page-nav">
+    <button type="button" class="pn-btn pn-close" onclick="history.back()" aria-label="关闭">&#215;</button>
+    <div class="pn-title">世界杯预言家：猜胜负，赢好礼</div>
+    <button type="button" class="pn-btn pn-more" onclick="showToast('⋯','更多操作',false)" aria-label="更多">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="mobile-nav">
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="mn-btn" id="heroRulesBtn" style="font-size:12px;font-weight:700;width:auto;padding:0 12px;border-radius:18px;" onclick="showRules()">活动规则</div>
+      </div>
+    </div>
+    <div class="hero-title-wrap">
+      <div class="hero-title">世界杯预言家<br>猜胜负，赢好礼</div>
+    </div>
+    <div class="hero-illustration">
+      <div class="hero-coin c1">🪙</div>
+      <div class="hero-coin c2">⭐</div>
+      <div class="hero-coin c3">🏅</div>
+      <div class="hero-coin c4">💫</div>
+      <div class="hero-bowl">🎯</div>
+    </div>
+  </div>
+
+  <!-- 个人信息板块 -->
+  <div class="coin-section" id="coinSection"></div>
+
+  <!-- SCROLL BODY -->
+  <div class="scroll-body">
+
+    <!-- 参与播报跑马灯 -->
+    <div class="marquee">
+      <div class="marquee-viewport">
+        <div class="marquee-track" id="marqueeTrack"></div>
+      </div>
+    </div>
+
+    <!-- MATCH CAROUSEL -->
+    <div class="carousel-wrap">
+      <div class="carousel-track" id="carouselTrack"></div>
+    </div>
+
+    <!-- TOPIC BANNER -->
+    <div class="topic-banner" onclick="showToast('🏆','美加墨世界杯专题',false)">
+      <div class="tb-mask"></div>
+      <div class="tb-content">
+        <span class="tb-tag">专题</span>
+        <div class="tb-title">美加墨世界杯</div>
+      </div>
+      <div class="tb-arrow">&#8250;</div>
+    </div>
+
+    <!-- 兑好礼 -->
+    <div class="gift-card">
+      <div class="gift-header">
+        <div class="gift-title">🎁 兑好礼</div>
+      </div>
+      <div class="gift-grid" id="giftGrid"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- 活动规则弹窗 -->
+<div class="modal-mask" id="rulesModal">
+  <div class="modal-card">
+    <div class="modal-title">活动规则</div>
+    <div class="modal-body">活动描述</div>
+    <button type="button" class="modal-btn" onclick="closeRulesModal()">知道了</button>
+  </div>
+</div>
+
+<!-- 参与成功弹窗 -->
+<div class="modal-mask" id="joinModal">
+  <div class="modal-card">
+    <button type="button" class="modal-close" onclick="closeJoinModal()" aria-label="关闭">&#215;</button>
+    <div class="modal-emoji">🎉</div>
+    <div class="modal-title">参与成功，待开奖</div>
+    <div class="modal-sub">建议打开 App 系统通知，不错过结果通知！</div>
+    <button type="button" class="modal-btn" onclick="enableAppNotice()">打开 App 通知</button>
+  </div>
+</div>
+
+<!-- 竞猜记录弹窗 -->
+<div class="modal-mask" id="recordsModal">
+  <div class="records-modal-card">
+    <button type="button" class="modal-close" onclick="closeRecordsModal()" aria-label="关闭">&#215;</button>
+    <div class="records-modal-title">竞猜记录</div>
+    <div class="records-list" id="recordsList"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="t-main" id="tMain">+50</div>
+  <div class="t-label" id="tLabel">南瓜值到账！</div>
+  <div class="t-cold" id="tCold">🔥 冷门加成 × 2</div>
+</div>
+
+<script>
+// ==================== DATA ====================
+let state = {
+  loggedIn: false,     // true = 已登录，false = 未登录
+  pumpkinPts: 2680,
+  correct: 3,
+  votes: {
+    m1: { pick: 'B' },   // 待开奖·已参与
+    m7: { pick: 'A' },   // 已锁盘·已参与
+    m2: { pick: 'A' },   // 已开奖·已参与·猜中
+    m6: { pick: 'D' },   // 已开奖·已参与·未猜中
+  },
+};
+
+const matches = [
+  // 默认展示：待开奖·未参与可竞猜
+  {
+    id:'m3', status:'open',
+    category:'小组赛C组第1轮',
+    question:'世界杯小组赛C组，哪支球队会获胜？',
+    deadline:'今天 18:00',
+    kickoff:'2026-06-09T18:00:00',
+    teamA:{f:'🇦🇷', n:'阿根廷'}, teamB:{f:'🇸🇦', n:'沙特'},
+    pcts:{A:68, D:12, B:20}, mults:{A:'1.01', D:'5.00', B:'4.13'},
+    result: null, score: null,
+  },
+  // 左侧露出：待开奖·已参与（预置了 vote）
+  {
+    id:'m1', status:'open',
+    category:'小组赛A组第1轮',
+    question:'世界杯小组赛A组，哪支球队会获胜？',
+    deadline:'今天 21:00',
+    kickoff:'2026-06-09T21:00:00',
+    teamA:{f:'🇶🇦', n:'卡塔尔'}, teamB:{f:'🇪🇨', n:'厄瓜多尔'},
+    pcts:{A:22, D:18, B:60}, mults:{A:'1.82', D:'5.00', B:'1.40'},
+    result: null, score: null,
+  },
+  // 已锁盘·未参与
+  {
+    id:'m4', status:'locked',
+    category:'小组赛E组第1轮',
+    question:'世界杯小组赛E组，哪支球队会获胜？',
+    deadline:'已截止',
+    kickoff:'2026-06-09T23:00:00',
+    teamA:{f:'🇩🇪', n:'德国'}, teamB:{f:'🇯🇵', n:'日本'},
+    pcts:{A:61, D:18, B:21}, mults:{A:'1.10', D:'5.00', B:'3.20'},
+    result: null, score: null,
+  },
+  // 已锁盘·已参与
+  {
+    id:'m7', status:'locked',
+    category:'小组赛B组第1轮',
+    question:'世界杯小组赛B组，哪支球队会获胜？',
+    deadline:'已截止',
+    kickoff:'2026-06-09T20:00:00',
+    teamA:{f:'🇬🇧', n:'英格兰'}, teamB:{f:'🇮🇷', n:'伊朗'},
+    pcts:{A:72, D:14, B:14}, mults:{A:'1.05', D:'5.00', B:'3.80'},
+    result: null, score: null,
+  },
+  // 已开奖·未参与·平局
+  {
+    id:'m5', status:'ended',
+    category:'小组赛F组第2轮',
+    question:'世界杯小组赛F组，哪支球队会获胜？',
+    deadline:'06/12 00:00',
+    kickoff:'2026-06-12T00:00:00',
+    teamA:{f:'🇧🇪', n:'比利时'}, teamB:{f:'🇨🇦', n:'加拿大'},
+    pcts:{A:79, D:8, B:13}, mults:{A:'1.05', D:'5.20', B:'3.80'},
+    result:'D', score:'0:0',
+  },
+  // 已开奖·已参与·未猜中（预置 vote pick:D，result:'B'）
+  {
+    id:'m6', status:'ended',
+    category:'小组赛G组第1轮',
+    question:'世界杯小组赛G组，哪支球队会获胜？',
+    deadline:'06/11 00:00',
+    kickoff:'2026-06-11T00:00:00',
+    teamA:{f:'🇧🇷', n:'巴西'}, teamB:{f:'🇷🇸', n:'塞尔维亚'},
+    pcts:{A:75, D:10, B:15}, mults:{A:'1.05', D:'5.00', B:'3.50'},
+    result:'B', score:'0:1',
+  },
+  // 已开奖·已参与·猜中（预置 vote pick:A，result:'A'）
+  {
+    id:'m2', status:'ended',
+    category:'小组赛H组第1轮',
+    question:'世界杯小组赛H组，哪支球队会获胜？',
+    deadline:'06/13 00:00',
+    kickoff:'2026-06-13T00:00:00',
+    teamA:{f:'🇵🇹', n:'葡萄牙'}, teamB:{f:'🇬🇭', n:'加纳'},
+    pcts:{A:81, D:5, B:14}, mults:{A:'1.01', D:'5.50', B:'2.83'},
+    result:'A', score:'3:2',
+  },
+];
+
+// ==================== 竞猜记录 DATA ====================
+const guessRecords = [
+  { teamA: '卡塔尔', teamB: '厄瓜多尔', kickoff: '2026-06-09T12:00:00', outcome: 'pending' },
+  { teamA: '阿根廷', teamB: '沙特',     kickoff: '2026-06-09T12:00:00', outcome: 'lose' },
+  { teamA: '葡萄牙', teamB: '加纳',     kickoff: '2026-06-13T00:00:00', outcome: 'win' },
+  { teamA: '巴西',   teamB: '塞尔维亚', kickoff: '2026-06-11T00:00:00', outcome: 'lose' },
+  { teamA: '德国',   teamB: '日本',     kickoff: '2026-06-08T20:00:00', outcome: 'pending' },
+];
+
+// ==================== 兑好礼 DATA ====================
+const gifts = [
+  {emoji:'👕', name:'球迷T恤', cost:'1200'},
+  {emoji:'⚽', name:'定制足球', cost:'2000'},
+  {emoji:'🎫', name:'观赛门票', cost:'5000'},
+  {emoji:'🏆', name:'纪念奖杯', cost:'3000'},
+];
+
+// ==================== 实时播报 DATA ====================
+const feeds = [
+  {a:'😎', u:'球迷达***', act:'猜中', hl:'+300 南瓜值'},
+  {a:'🦁', u:'绿茵之***', act:'参与了', hl:'A组竞猜'},
+  {a:'🐯', u:'冠军预***', act:'猜中冷门', hl:'+100 南瓜值'},
+  {a:'🐼', u:'看球小***', act:'兑换了', hl:'球迷T恤'},
+  {a:'🦅', u:'足球之***', act:'参与了', hl:'C组竞猜'},
+  {a:'🐲', u:'热血球***', act:'猜中', hl:'+300 南瓜值'},
+  {a:'🦊', u:'世界杯***', act:'参与了', hl:'H组竞猜'},
+  {a:'🐻', u:'守门员***', act:'兑换了', hl:'观赛门票'},
+];
+
+// ==================== 状态总览 ====================
+const STATE_SHOTS = [
+  { file: '01-未登录-默认赛事.png',           label: '01 · 未登录 · 默认赛事（阿根廷 vs 沙特）' },
+  { file: '02-已登录-待开奖未参与-阿根廷.png', label: '02 · 已登录 · 待开奖 · 未参与' },
+  { file: '03-待开奖已参与-卡塔尔.png',        label: '03 · 待开奖 · 已参与' },
+  { file: '04-待开奖已锁定-德国.png',          label: '04 · 待开奖 · 已锁定 · 未参与' },
+  { file: '05-已开奖未参与平局-比利时.png',    label: '05 · 已开奖 · 未参与 · 平局' },
+  { file: '06-已开奖已参与猜错-巴西.png',      label: '06 · 已开奖 · 已参与 · 未猜中' },
+  { file: '07-已开奖已参与猜中-葡萄牙.png',    label: '07 · 已开奖 · 已参与 · 猜中' },
+  { file: '08-参与成功弹窗.png',               label: '08 · 参与成功弹窗' },
+  { file: '09-活动规则弹窗.png',               label: '09 · 活动规则弹窗' },
+];
+
+function isDemoMode() {
+  return new URLSearchParams(location.search).has('demo');
+}
+
+function buildStatesGallery() {
+  const grid = document.getElementById('sgGrid');
+  if (!grid) return;
+  grid.innerHTML = STATE_SHOTS.map(s => `
+    <div class="sg-item">
+      <div class="sg-label">${s.label}</div>
+      <a class="sg-phone" href="screenshots/${s.file}?v=2" target="_blank" rel="noopener">
+        <img src="screenshots/${s.file}?v=2" alt="${s.label}" loading="lazy">
+      </a>
+    </div>`).join('');
+}
+
+// ==================== INIT ====================
+window.onload = function() {
+  if (isDemoMode()) {
+    document.body.classList.add('demo-mode');
+    renderCoinBar();
+    buildMarquee();
+    renderMatchList();
+    buildGiftGrid();
+    applyCaptureParams();
+  } else {
+    document.body.classList.add('gallery-mode');
+    buildStatesGallery();
+  }
+};
+
+function applyCaptureParams() {
+  const p = new URLSearchParams(location.search);
+  if (p.has('login')) {
+    state.loggedIn = p.get('login') === '1';
+    renderCoinBar();
+  }
+  if (p.has('slide')) {
+    currentSlide = Math.max(0, Math.min(+p.get('slide'), matches.length - 1));
+    goToSlide(currentSlide, false);
+  }
+  const modal = p.get('modal');
+  if (modal === 'join') showJoinModal();
+  if (modal === 'rules') showRules();
+  if (modal === 'records') showRecordsModal();
+}
+
+function showRules() {
+  document.getElementById('rulesModal').classList.add('show');
+}
+function closeRulesModal() {
+  document.getElementById('rulesModal').classList.remove('show');
+}
+
+function renderCoinBar() {
+  const section = document.getElementById('coinSection');
+  const heroNav = document.querySelector('.mobile-nav');
+  if (!section) return;
+  if (heroNav) heroNav.style.display = 'none';
+
+  if (!state.loggedIn) {
+    section.className = 'coin-section';
+    section.innerHTML = `
+      <div class="coin-main">
+        <div class="coin-left coin-left-guest" onclick="doLogin()">
+          <div class="coin-avatar coin-avatar-default">👤</div>
+          <div class="coin-guest-tip">登录后参与</div>
+        </div>
+        <button type="button" class="coin-rules-btn" onclick="event.stopPropagation();showRules()">活动规则</button>
+      </div>`;
+  } else {
+    section.className = 'coin-section';
+    section.innerHTML = `
+      <div class="coin-main">
+        <div class="coin-left">
+          <div class="coin-avatar">😎</div>
+          <div class="coin-nickname">球迷达人</div>
+        </div>
+        <div class="coin-pts-wrap">
+          <div class="coin-pts-val" id="coinVal">🎃 ${state.pumpkinPts.toLocaleString()}</div>
+          <div class="coin-pts-label">南瓜值</div>
+        </div>
+      </div>
+      <div class="coin-actions">
+        <button type="button" class="coin-act-btn" onclick="showRules()">
+          <span class="coin-act-icon">ℹ️</span>活动规则
+        </button>
+        <button type="button" class="coin-act-btn" onclick="showRecordsModal()">
+          <span class="coin-act-icon">📋</span>竞猜记录
+        </button>
+        <button type="button" class="coin-act-btn" onclick="showToast('✅','签到赚南瓜',false)">
+          <span class="coin-act-icon">🎃</span>签到赚南瓜
+        </button>
+      </div>`;
+  }
+}
+
+function doLogin() {
+  state.loggedIn = true;
+  renderCoinBar();
+  showToast('👋', '登录成功', false);
+}
+
+function buildMarquee() {
+  const track = document.getElementById('marqueeTrack');
+  if (!track) return;
+  const itemHTML = f => `
+    <span class="mq-item">
+      <span class="mq-avatar">${f.a}</span>
+      <span class="mq-user">${f.u}</span>
+      <span class="mq-act">${f.act}</span>
+      <span class="mq-hl">${f.hl}</span>
+    </span>`;
+  // 重复一份，实现无缝循环
+  const html = feeds.map(itemHTML).join('');
+  track.innerHTML = html + html;
+}
+
+function buildGiftGrid() {
+  const grid = document.getElementById('giftGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  gifts.forEach(g => {
+    const item = document.createElement('div');
+    item.className = 'gift-item';
+    item.onclick = () => showToast(g.emoji, g.name + ' · 兑换', false);
+    item.innerHTML = `
+      <div class="gift-emoji">${g.emoji}</div>
+      <div class="gift-name">${g.name}</div>
+      <div class="gift-cost">🎃 ${g.cost}</div>
+    `;
+    grid.appendChild(item);
+  });
+}
+
+// ==================== CAROUSEL ====================
+let currentSlide = 0;   // 默认展示阿根廷 vs 沙特，左侧露出卡塔尔
+
+function renderMatchList() {
+  const track = document.getElementById('carouselTrack');
+  track.innerHTML = '';
+
+  matches.forEach((m, i) => {
+    const card = buildMatchCard(m);
+    track.appendChild(card);
+  });
+
+  goToSlide(currentSlide, false);
+  initSwipe();
+}
+
+function getSlotW() {
+  const track = document.getElementById('carouselTrack');
+  const first = track.querySelector('.match-card');
+  if (!first) return track.parentElement.offsetWidth;
+  const gap = parseFloat(getComputedStyle(track).gap) || 0;
+  return first.offsetWidth + gap;
+}
+
+function setTrackX(px, animate) {
+  const track = document.getElementById('carouselTrack');
+  track.style.transition = animate ? '' : 'none';
+  track.style.transform = `translateX(${px}px)`;
+  if (!animate) requestAnimationFrame(() => track.style.transition = '');
+}
+
+function goToSlide(idx, animate = true) {
+  currentSlide = Math.max(0, Math.min(idx, matches.length - 1));
+  setTrackX(currentSlide * getSlotW(), animate);
+  document.querySelectorAll('.match-card')
+    .forEach((c, i) => c.classList.toggle('peek', i !== currentSlide));
+}
+
+let swipeBound = false;
+function initSwipe() {
+  if (swipeBound) return;          // 仅绑定一次，避免重复监听叠加
+  swipeBound = true;
+  const wrap = document.getElementById('carouselTrack').parentElement;
+  let dragging = false, startX = 0, startY = 0, dx = 0, horiz = false;
+
+  const down = (x, y) => { dragging = true; startX = x; startY = y; dx = 0; horiz = false; };
+
+  const move = (x, y, ev) => {
+    if (!dragging) return;
+    const mx = x - startX, my = y - startY;
+    if (!horiz) {
+      if (Math.abs(mx) > Math.abs(my) && Math.abs(mx) > 6) horiz = true;
+      else if (Math.abs(my) > 6) { dragging = false; return; }
+      else return;
+    }
+    dx = mx;
+    if (ev && ev.cancelable) ev.preventDefault();
+    setTrackX(currentSlide * getSlotW() + dx, false);   // 实时跟手
+  };
+
+  const up = () => {
+    if (!dragging) return;
+    dragging = false;
+    if (horiz && Math.abs(dx) > 40) {
+      // 隐藏卡在左侧：向右滑看下一张，向左滑返回
+      dx > 0 ? goToSlide(currentSlide + 1) : goToSlide(currentSlide - 1);
+    } else {
+      goToSlide(currentSlide);     // 未达阈值则回弹
+    }
+  };
+
+  // 触摸
+  wrap.addEventListener('touchstart', e => down(e.touches[0].clientX, e.touches[0].clientY), {passive: true});
+  wrap.addEventListener('touchmove', e => move(e.touches[0].clientX, e.touches[0].clientY, e), {passive: false});
+  wrap.addEventListener('touchend', up);
+  // 鼠标（桌面端）
+  wrap.addEventListener('mousedown', e => down(e.clientX, e.clientY));
+  window.addEventListener('mousemove', e => move(e.clientX, e.clientY, e));
+  window.addEventListener('mouseup', up);
+}
+
+function buildMatchCard(m) {
+  const voted = state.votes[m.id];
+  const card = document.createElement('div');
+  card.className = 'match-card';
+  card.id = 'card-' + m.id;
+
+  // Category + Deadline
+  const deadlineCls = m.status === 'ended'
+    ? 'mc-deadline ended'
+    : m.status === 'locked'
+      ? 'mc-deadline locked'
+      : 'mc-deadline';
+  const deadlineText = m.status === 'ended'
+    ? `竞猜已截止：${m.deadline}`
+    : `竞猜截止：${m.deadline}`;
+  const categoryHtml = m.category
+    ? `<div class="mc-category">${m.category}</div>`
+    : '';
+  card.innerHTML = `${categoryHtml}<div class="${deadlineCls}">${deadlineText}</div>`;
+
+  // Teams VS
+  const tv = document.createElement('div');
+  tv.className = 'teams-vs';
+  const teamHtml = (team, side) => {
+    const win = m.status === 'ended' && m.result && m.result !== 'D' && m.result === side;
+    const lose = m.status === 'ended' && m.result && m.result !== 'D' && m.result !== side;
+    const cls = win ? 'tv-team winner' : lose ? 'tv-team loser' : 'tv-team';
+    return `
+      <div class="${cls}">
+        <div class="tv-flag">${team.f}${win ? '<span class="tv-win-badge">赢</span>' : ''}</div>
+        <div class="tv-name">${team.n}</div>
+      </div>`;
+  };
+  if (m.status === 'ended' && m.result) {
+    const mid = m.result === 'D'
+      ? '<span class="tv-vs draw">平局</span>'
+      : '<span class="tv-vs">VS</span>';
+    tv.innerHTML = teamHtml(m.teamA, 'A') + mid + teamHtml(m.teamB, 'B');
+  } else {
+    tv.innerHTML = teamHtml(m.teamA, 'A') + '<span class="tv-vs">VS</span>' + teamHtml(m.teamB, 'B');
+  }
+  card.appendChild(tv);
+
+  // Vote buttons
+  const opts = [
+    {key:'A', name:m.teamA.n, mult:m.mults.A, pct:m.pcts.A, baseClass:'vpb-a', selClass:'selected-a', revClass:'revealed-a', corClass:'correct-result'},
+    {key:'D', name:'平局',     mult:m.mults.D, pct:m.pcts.D, baseClass:'vpb-d', selClass:'selected-d', revClass:'revealed-d', corClass:'correct-result'},
+    {key:'B', name:m.teamB.n, mult:m.mults.B, pct:m.pcts.B, baseClass:'vpb-b', selClass:'selected-b', revClass:'revealed-b', corClass:'correct-result'},
+  ];
+  // 淘汰赛只有两个选项（去掉平局）for locked/ended demonstration keep 3
+
+  const voteRow = document.createElement('div');
+  voteRow.className = 'vote-row';
+  const canVote = !voted && m.status === 'open';
+
+  if (canVote) {
+    opts.forEach(o => {
+      const btn = document.createElement('button');
+      btn.className = `vote-pill-btn ${o.baseClass}`;
+      btn.innerHTML = `<span class="vpb-name">${o.name}</span><span class="vpb-mult">${o.pct}%用户选</span>`;
+      btn.onclick = () => castVote(m.id, o.key);
+      voteRow.appendChild(btn);
+    });
+  } else {
+    opts.forEach(o => {
+      const isSel = voted && o.key === voted.pick;
+      const btn = document.createElement('div');
+      btn.className = `vote-pill-btn ${isSel ? o.selClass : o.revClass}`;
+      btn.style.cursor = 'default';
+      const tag = isSel ? '<span class="vpb-tag">已选</span>' : '';
+      btn.innerHTML = `
+        <span class="vpb-name">${o.name}${tag}</span>
+        <span class="vpb-mult">${o.pct}%用户选</span>
+      `;
+      voteRow.appendChild(btn);
+    });
+  }
+
+  card.appendChild(voteRow);
+
+  // Result status block (参与后状态)
+  if (voted) {
+    card.appendChild(buildResultStatus(m, voted));
+  }
+
+  // Footer hints（已参与后不可修改，无修改预测入口）
+  if (!voted && (m.status === 'ended' || m.status === 'locked')) {
+    const hint = document.createElement('div');
+    hint.className = 'not-voted-hint';
+    hint.textContent = '您未参与本场竞猜';
+    card.appendChild(hint);
+  }
+
+
+  return card;
+}
+
+// 选项 key -> 名称
+function pickName(m, key) {
+  return key === 'A' ? m.teamA.n : key === 'B' ? m.teamB.n : '平局';
+}
+
+const PARTICIPATE_REWARD = 50;   // 参与即得南瓜值
+
+function buildResultStatus(m, voted) {
+  const pick = voted.pick;
+  const name = pickName(m, pick);
+  const reward = PARTICIPATE_REWARD;
+  const box = document.createElement('div');
+
+  if (m.status === 'ended' && m.result) {
+    const win = pick === m.result;
+    box.className = 'result-status ' + (win ? 'win' : 'lose');
+    if (win) {
+      box.innerHTML = `
+        <div class="rs-icon">🎉</div>
+        <div class="rs-info">
+          <div class="rs-title">恭喜猜对！</div>
+          <div class="rs-desc">你选择了“<b>${name}</b>”，获得${reward}南瓜</div>
+        </div>
+      `;
+    } else {
+      box.innerHTML = `
+        <div class="rs-icon">😔</div>
+        <div class="rs-info">
+          <div class="rs-title">很遗憾，未猜中</div>
+          <div class="rs-desc">你选择了“<b>${name}</b>”，正确结果“<b>${pickName(m, m.result)}</b>”</div>
+        </div>
+      `;
+    }
+  } else if (m.status === 'locked') {
+    box.className = 'result-status pending';
+    box.innerHTML = `
+      <div class="rs-icon">🔒</div>
+      <div class="rs-info">
+        <div class="rs-title">已锁盘 · 等待开赛</div>
+        <div class="rs-desc">你选择了“<b>${name}</b>”，猜对可获得${reward}南瓜</div>
+      </div>
+    `;
+  } else {
+    box.className = 'result-status pending';
+    box.innerHTML = `
+      <div class="rs-icon">⏳</div>
+      <div class="rs-info">
+        <div class="rs-title">等待开赛</div>
+        <div class="rs-desc">你选择了“<b>${name}</b>”，猜对可获得${reward}南瓜</div>
+      </div>
+    `;
+  }
+  return box;
+}
+
+function castVote(id, pick) {
+  const m = matches.find(x => x.id === id);
+  if (!m || m.status !== 'open') return;
+  state.votes[id] = { pick };
+  renderMatchList();
+  showJoinModal();
+}
+
+// ==================== 参与成功弹窗 ====================
+function showJoinModal() {
+  document.getElementById('joinModal').classList.add('show');
+}
+function closeJoinModal() {
+  document.getElementById('joinModal').classList.remove('show');
+}
+function enableAppNotice() {
+  closeJoinModal();
+  showToast('🔔', '已开启结果通知', false);
+}
+
+// ==================== 竞猜记录弹窗 ====================
+function formatRecordTime(kickoff) {
+  const d = new Date(kickoff);
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const hm = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const isToday = d.getFullYear() === now.getFullYear()
+    && d.getMonth() === now.getMonth()
+    && d.getDate() === now.getDate();
+  return isToday
+    ? `今日 ${hm}`
+    : `${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${hm}`;
+}
+
+function getRecordResultText(outcome) {
+  if (outcome === 'win') return { text: '猜中', cls: 'win' };
+  if (outcome === 'lose') return { text: '未猜中', cls: 'lose' };
+  return { text: '待开奖', cls: 'pending' };
+}
+
+function showRecordsModal() {
+  const list = document.getElementById('recordsList');
+  list.innerHTML = guessRecords.map(r => {
+    const res = getRecordResultText(r.outcome);
+    return `
+      <div class="records-item">
+        <span class="records-match">${r.teamA}：${r.teamB}</span>
+        <span class="records-time">${formatRecordTime(r.kickoff)}</span>
+        <span class="records-result ${res.cls}">${res.text}</span>
+      </div>`;
+  }).join('');
+  document.getElementById('recordsModal').classList.add('show');
+}
+
+function closeRecordsModal() {
+  document.getElementById('recordsModal').classList.remove('show');
+}
+
+function updateDisplay() {
+  const v = state.pumpkinPts.toLocaleString();
+  const cv = document.getElementById('coinVal');
+  if (cv) cv.textContent = '🎃 ' + v;
+}
+
+// ==================== TOAST ====================
+function showToast(main, label, cold) {
+  const t = document.getElementById('toast');
+  document.getElementById('tMain').textContent = main;
+  document.getElementById('tLabel').textContent = label;
+  document.getElementById('tCold').style.display = cold ? 'block' : 'none';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>
