@@ -671,7 +671,7 @@ body.demo-mode .demo-back { display: block; }
 <div id="statesGallery">
   <div class="sg-header">
     <div class="sg-title">世界杯预言家 · 全部状态预览</div>
-    <div class="sg-sub">共 9 种完整页面截图，一行多个排列<br>点击图片可新窗口打开原图</div>
+    <div class="sg-sub">共 11 种完整页面截图，一行多个排列<br>点击图片可新窗口打开原图</div>
     <a class="sg-demo-link" href="?demo=1">进入交互演示 →</a>
   </div>
   <div class="sg-grid" id="sgGrid"></div>
@@ -921,12 +921,14 @@ const STATE_SHOTS = [
   { file: '01-未登录-默认赛事.png',           label: '01 · 未登录 · 默认赛事（阿根廷 vs 沙特）' },
   { file: '02-已登录-待开奖未参与-阿根廷.png', label: '02 · 已登录 · 待开奖 · 未参与' },
   { file: '03-待开奖已参与-卡塔尔.png',        label: '03 · 待开奖 · 已参与' },
-  { file: '04-待开奖已锁定-德国.png',          label: '04 · 待开奖 · 已锁定 · 未参与' },
-  { file: '05-已开奖未参与平局-比利时.png',    label: '05 · 已开奖 · 未参与 · 平局' },
-  { file: '06-已开奖已参与猜错-巴西.png',      label: '06 · 已开奖 · 已参与 · 未猜中' },
-  { file: '07-已开奖已参与猜中-葡萄牙.png',    label: '07 · 已开奖 · 已参与 · 猜中' },
-  { file: '08-参与成功弹窗.png',               label: '08 · 参与成功弹窗' },
-  { file: '09-活动规则弹窗.png',               label: '09 · 活动规则弹窗' },
+  { file: '04-已锁盘未参与-德国.png',          label: '04 · 已锁盘 · 未参与' },
+  { file: '05-已锁盘已参与-英格兰.png',        label: '05 · 已锁盘 · 已参与' },
+  { file: '06-已开奖未参与平局-比利时.png',    label: '06 · 已开奖 · 未参与 · 平局' },
+  { file: '07-已开奖已参与猜错-巴西.png',      label: '07 · 已开奖 · 已参与 · 未猜中' },
+  { file: '08-已开奖已参与猜中-葡萄牙.png',    label: '08 · 已开奖 · 已参与 · 猜中' },
+  { file: '09-参与成功弹窗.png',               label: '09 · 参与成功弹窗' },
+  { file: '10-活动规则弹窗.png',               label: '10 · 活动规则弹窗' },
+  { file: '11-竞猜记录弹窗.png',               label: '11 · 竞猜记录弹窗' },
 ];
 
 function isDemoMode() {
@@ -939,8 +941,8 @@ function buildStatesGallery() {
   grid.innerHTML = STATE_SHOTS.map(s => `
     <div class="sg-item">
       <div class="sg-label">${s.label}</div>
-      <a class="sg-phone" href="screenshots/${s.file}?v=2" target="_blank" rel="noopener">
-        <img src="screenshots/${s.file}?v=2" alt="${s.label}" loading="lazy">
+      <a class="sg-phone" href="screenshots/${s.file}?v=3" target="_blank" rel="noopener">
+        <img src="screenshots/${s.file}?v=3" alt="${s.label}" loading="lazy">
       </a>
     </div>`).join('');
 }
