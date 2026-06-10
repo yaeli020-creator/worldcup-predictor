@@ -1171,6 +1171,7 @@ const STATE_SHOTS = [
   { file: '09-参与成功弹窗.png',               label: '09 · 参与成功弹窗' },
   { file: '10-活动规则弹窗.png',               label: '10 · 活动规则弹窗' },
   { file: '11-竞猜记录弹窗.png',               label: '11 · 竞猜记录弹窗' },
+  { file: '12-分享海报弹窗.png',               label: '12 · 分享海报弹窗' },
 ];
 
 function isDemoMode() {
@@ -1183,8 +1184,8 @@ function buildStatesGallery() {
   grid.innerHTML = STATE_SHOTS.map(s => `
     <div class="sg-item">
       <div class="sg-label">${s.label}</div>
-      <a class="sg-phone" href="screenshots/${s.file}?v=3" target="_blank" rel="noopener">
-        <img src="screenshots/${s.file}?v=3" alt="${s.label}" loading="lazy">
+      <a class="sg-phone" href="screenshots/${s.file}?v=4" target="_blank" rel="noopener">
+        <img src="screenshots/${s.file}?v=4" alt="${s.label}" loading="lazy">
       </a>
     </div>`).join('');
 }
