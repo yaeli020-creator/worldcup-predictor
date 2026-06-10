@@ -18,6 +18,7 @@ const shots = [
   { file: '09-参与成功弹窗.png',                 query: 'demo=1&login=1&slide=0&modal=join' },
   { file: '10-活动规则弹窗.png',                 query: 'demo=1&login=1&modal=rules' },
   { file: '11-竞猜记录弹窗.png',               query: 'demo=1&login=1&modal=records' },
+  { file: '12-分享海报弹窗.png',               query: 'demo=1&login=1&modal=share&match=m1' },
 ];
 
 async function getPageHeight(page) {
