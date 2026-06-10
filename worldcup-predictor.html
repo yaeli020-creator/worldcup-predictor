@@ -491,6 +491,18 @@ html, body {
 .rs-desc b { color: var(--on-surface); font-weight: 600; }
 
 /* ===== 分享海报弹窗 ===== */
+#shareModal.modal-mask {
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
+  padding: 0;
+}
+.share-modal-stage {
+  flex: 1; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px 16px 12px;
+  overflow-y: auto;
+}
 .share-modal-card {
   width: 300px; max-width: 90%;
   background: var(--surface-container); border-radius: var(--radius-card-lg);
@@ -499,8 +511,9 @@ html, body {
   transform: scale(.85); transition: transform .28s cubic-bezier(.34,1.56,.64,1);
   box-shadow: 0 16px 48px rgba(0,0,0,.28);
   font-family: 'Anybody', -apple-system, 'PingFang SC', sans-serif;
+  flex-shrink: 0;
 }
-.modal-mask.show .share-modal-card { transform: scale(1); }
+#shareModal.modal-mask.show .share-modal-card { transform: scale(1); }
 .share-modal-card .modal-close {
   color: rgba(255,255,255,.9); z-index: 3;
   top: 10px; right: 10px;
@@ -628,6 +641,50 @@ html, body {
   background: linear-gradient(160deg, var(--secondary) 0%, #003830 100%);
   font-size: 10px; font-weight: 500; color: rgba(255,255,255,.55);
 }
+.share-poster-body { position: relative; }
+.share-channels {
+  width: 100%; flex-shrink: 0;
+  background: var(--surface-container);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 24px rgba(0,0,0,.08);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.share-channel-row {
+  display: flex; justify-content: space-around;
+  padding: 20px 12px 14px; gap: 2px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.share-channel-item {
+  flex: 1 0 0; min-width: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  border: none; background: none; padding: 0; cursor: pointer;
+  font-family: inherit;
+}
+.share-channel-item:active { opacity: .65; }
+.share-channel-icon {
+  width: 48px; height: 48px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; flex-shrink: 0;
+}
+.share-channel-icon svg { width: 24px; height: 24px; display: block; }
+.share-channel-icon.save { background: #ff8a00; }
+.share-channel-icon.wechat { background: #7bc549; }
+.share-channel-icon.moments { background: #2e9e4d; }
+.share-channel-icon.weibo { background: #e6162d; }
+.share-channel-icon.qq { background: #4cace8; }
+.share-channel-icon.qzone { background: #f5b800; }
+.share-channel-label {
+  font-size: 11px; font-weight: 500; line-height: 1.2;
+  color: var(--on-surface-variant); white-space: nowrap;
+}
+.share-channel-cancel {
+  width: 100%; border: none; border-top: 8px solid #f0f2f1;
+  background: var(--surface-container);
+  padding: 14px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  font-size: 16px; font-weight: 500; color: var(--on-surface);
+  cursor: pointer; font-family: inherit;
+}
+.share-channel-cancel:active { background: #f7f7f7; }
 
 /* ===== TOPIC BANNER ===== */
 .topic-banner {
@@ -1008,7 +1065,9 @@ body.demo-mode .demo-back { display: block; }
 
 <!-- 分享海报弹窗 -->
 <div class="modal-mask" id="shareModal">
+  <div class="share-modal-stage">
   <div class="share-modal-card">
+    <div class="share-poster-body">
     <button type="button" class="modal-close" onclick="closeShareModal()" aria-label="关闭">&#215;</button>
     <div class="share-header">
       <div class="share-event-tag">🏆 2026 FIFA WORLD CUP</div>
@@ -1051,6 +1110,49 @@ body.demo-mode .demo-back { display: block; }
       <span>© 2026 World Cup Predictor</span>
       <span id="shareDeadline">截止今日 21:00</span>
     </div>
+    </div>
+  </div>
+  </div>
+  <div class="share-channels">
+      <div class="share-channel-row">
+        <button type="button" class="share-channel-item" onclick="shareViaChannel('save')">
+          <span class="share-channel-icon save" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10"/><path d="M8.5 10.5 12 14l3.5-3.5"/><path d="M5 18h14"/></svg>
+          </span>
+          <span class="share-channel-label">保存本地</span>
+        </button>
+        <button type="button" class="share-channel-item" onclick="shareViaChannel('wechat')">
+          <span class="share-channel-icon wechat" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 5C5.46 5 3 7.13 3 9.75c0 1.4.74 2.66 1.9 3.5L4 17l3.45-1.1c.78.22 1.62.35 2.5.35.27 0 .53-.02.78-.05A4.2 4.2 0 0 1 8.5 14C8.5 11.24 11.02 9 14.25 9c.39 0 .77.04 1.13.12C14.6 6.7 11.78 5 8.5 5Zm-2 3.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm4 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/><path d="M14.25 10.5c-2.62 0-4.75 1.79-4.75 4 0 .72.2 1.4.55 2L9 18.5l2.2-.95c.65.25 1.36.4 2.1.4 2.62 0 4.75-1.79 4.75-4s-2.13-3.45-4.75-3.45Zm-2.2 2.45a.8.8 0 1 1 0-1.6.8.8 0 0 1 0 1.6Zm2.9 0a.8.8 0 1 1 0-1.6.8.8 0 0 1 0 1.6Z"/></svg>
+          </span>
+          <span class="share-channel-label">微信</span>
+        </button>
+        <button type="button" class="share-channel-item" onclick="shareViaChannel('moments')">
+          <span class="share-channel-icon moments" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M5.6 18.4l1.6-1.6M16.8 7.2l1.6-1.6"/></svg>
+          </span>
+          <span class="share-channel-label">朋友圈</span>
+        </button>
+        <button type="button" class="share-channel-item" onclick="shareViaChannel('weibo')">
+          <span class="share-channel-icon weibo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.2 18.5c-3.1.2-5.7-1.1-5.8-2.9-.1-1.8 2.3-3.4 5.4-3.6 3.1-.2 5.7 1.1 5.8 2.9.1 1.8-2.3 3.4-5.4 3.6Zm-.3-5.1c-2 .1-3.7 1-3.8 2-.1 1 .9 1.7 2.5 1.9l.3-1.2c-.8-.1-1.3-.4-1.3-.7 0-.4.9-.8 2-.9 1.1-.1 2 .2 2 .6 0 .2-.4.4-1 .6l.3 1.2c1.6-.3 2.7-1.1 2.8-2.1.1-1-.9-1.7-2.5-1.9Z"/><path d="M16.8 7.2c2.5-.4 4.6.4 4.7 1.8.1 1.4-1.8 2.7-4.3 3.1-2.5.4-4.6-.4-4.7-1.8-.1-1.4 1.8-2.7 4.3-3.1Zm.2 2.4c1.2-.2 2.1.1 2.2.8.1.7-.7 1.4-1.9 1.6-1.2.2-2.1-.1-2.2-.8-.1-.7.7-1.4 1.9-1.6Z"/><path d="M17.8 5.5c.8-.1 1.4.2 1.5.8.1.6-.4 1.2-1.2 1.3-.8.1-1.4-.2-1.5-.8-.1-.6.4-1.2 1.2-1.3Z"/></svg>
+          </span>
+          <span class="share-channel-label">新浪微博</span>
+        </button>
+        <button type="button" class="share-channel-item" onclick="shareViaChannel('qq')">
+          <span class="share-channel-icon qq" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4c-3.8 0-7 2.4-7 5.4 0 1.7 1 3.2 2.6 4.1-.1.5-.4 1.8-.5 2.1-.1.4.2.7.6.5.3-.1 1.9-1.2 2.4-1.5.7.2 1.5.3 2.3.3 1 0 2-.2 2.9-.5l2.2 1.4c.4.2.7-.1.6-.5l-.4-2.1C18.4 12 19 10.8 19 9.4 19 6.4 15.8 4 12 4Zm-3.2 4.8a1.1 1.1 0 1 1 0-2.2 1.1 1.1 0 0 1 0 2.2Zm6.4 0a1.1 1.1 0 1 1 0-2.2 1.1 1.1 0 0 1 0 2.2Z"/></svg>
+          </span>
+          <span class="share-channel-label">QQ</span>
+        </button>
+        <button type="button" class="share-channel-item" onclick="shareViaChannel('qzone')">
+          <span class="share-channel-icon qzone" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 5.5h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2Z" opacity=".25"/><path d="M12 8.2l1.2 2.4 2.6.4-1.9 1.8.4 2.6L12 13.8l-2.3 1.2.4-2.6-1.9-1.8 2.6-.4L12 8.2Z"/></svg>
+          </span>
+          <span class="share-channel-label">QQ空间</span>
+        </button>
+      </div>
+      <button type="button" class="share-channel-cancel" onclick="closeShareModal()">取消</button>
   </div>
 </div>
 
@@ -1213,8 +1315,8 @@ function buildStatesGallery() {
   grid.innerHTML = STATE_SHOTS.map(s => `
     <div class="sg-item">
       <div class="sg-label">${s.label}</div>
-      <a class="sg-phone" href="screenshots/${s.file}?v=6" target="_blank" rel="noopener">
-        <img src="screenshots/${s.file}?v=6" alt="${s.label}" loading="lazy">
+      <a class="sg-phone" href="screenshots/${s.file}?v=7" target="_blank" rel="noopener">
+        <img src="screenshots/${s.file}?v=7" alt="${s.label}" loading="lazy">
       </a>
     </div>`).join('');
 }
@@ -1713,6 +1815,14 @@ function showSharePoster(matchId) {
 
 function closeShareModal() {
   document.getElementById('shareModal').classList.remove('show');
+}
+
+const SHARE_CHANNEL_NAMES = {
+  save: '保存本地', wechat: '微信', moments: '朋友圈',
+  weibo: '新浪微博', qq: 'QQ', qzone: 'QQ空间',
+};
+function shareViaChannel(channel) {
+  showToast('📤', `分享到${SHARE_CHANNEL_NAMES[channel] || '好友'}`, false);
 }
 
 function updateDisplay() {
