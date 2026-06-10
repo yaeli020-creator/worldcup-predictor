@@ -260,6 +260,9 @@ html, body {
   font-size: 12px; color: var(--on-surface);
 }
 .mq-text { font-weight: 500; white-space: nowrap; }
+.mq-country {
+  font-weight: 700; color: var(--primary);
+}
 
 .carousel-wrap {
   width: 100%;
@@ -490,58 +493,141 @@ html, body {
 /* ===== 分享海报弹窗 ===== */
 .share-modal-card {
   width: 300px; max-width: 90%;
-  background: #fff; border-radius: 20px;
+  background: var(--surface-container); border-radius: var(--radius-card-lg);
   padding: 0; overflow: hidden;
   position: relative;
   transform: scale(.85); transition: transform .28s cubic-bezier(.34,1.56,.64,1);
   box-shadow: 0 16px 48px rgba(0,0,0,.28);
+  font-family: 'Anybody', -apple-system, 'PingFang SC', sans-serif;
 }
 .modal-mask.show .share-modal-card { transform: scale(1); }
-.share-modal-card .modal-close { color: rgba(255,255,255,.85); z-index: 2; }
-.share-poster {
-  background: linear-gradient(160deg, #0A7A85 0%, #093550 100%);
-  padding: 24px 20px 20px; text-align: center; color: #fff;
+.share-modal-card .modal-close {
+  color: rgba(255,255,255,.9); z-index: 3;
+  top: 10px; right: 10px;
 }
-.share-user {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
+.share-header {
+  background: linear-gradient(160deg, #0A7A85 0%, #0E5A6E 40%, #093550 100%);
+  padding: 22px 20px 16px; text-align: center; color: var(--on-primary);
+  border-bottom: 1px solid rgba(255,255,255,.14);
+}
+.share-event-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  color: rgba(255,255,255,.72); margin-bottom: 8px;
+}
+.share-title {
+  font-size: 26px; font-weight: 800; line-height: 1.2;
+  letter-spacing: .04em; margin-bottom: 12px;
+}
+.share-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--primary); color: var(--on-primary);
+  font-size: 12px; font-weight: 700;
+  padding: 5px 14px; border-radius: 999px;
+}
+.share-match {
+  padding: 16px 18px 18px; text-align: center;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0, rgba(255,255,255,.04) 1px, transparent 1px, transparent 28px),
+    linear-gradient(160deg, var(--secondary) 0%, #003830 100%);
+  color: var(--on-primary);
+}
+.share-category {
+  display: inline-block;
+  font-size: 11px; font-weight: 500; line-height: 16px;
+  color: rgba(255,255,255,.88);
+  background: rgba(255,255,255,.12);
+  padding: 4px 12px; border-radius: 12px;
   margin-bottom: 14px;
 }
-.share-avatar {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; flex-shrink: 0;
-  border: 2px solid rgba(255,255,255,.35);
+.share-matchup {
+  display: flex; align-items: flex-start; justify-content: center; gap: 16px;
 }
-.share-nickname { font-size: 15px; font-weight: 800; }
+.share-team-col {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  flex: 1; min-width: 0;
+}
+.share-flag-box {
+  width: 60px; height: 42px; border-radius: var(--radius-selection);
+  background: var(--surface); border: var(--border-card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; line-height: 1;
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+}
+.share-team-name {
+  font-size: 12px; font-weight: 600; line-height: 1.3;
+  color: var(--on-primary); text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px;
+}
+.share-vs-col {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; padding-top: 10px; flex-shrink: 0;
+}
+.share-vs {
+  font-size: 13px; font-weight: 800; color: rgba(255,255,255,.55);
+  letter-spacing: .06em;
+}
+.share-kickoff {
+  display: inline-block;
+  font-size: 10px; font-weight: 600; line-height: 1;
+  color: var(--on-primary); background: var(--primary);
+  padding: 4px 10px; border-radius: 999px; white-space: nowrap;
+}
+.share-predict {
+  background: linear-gradient(90deg, rgba(255,181,0,.22) 0%, rgba(230,74,25,.14) 100%);
+  border-top: 1px solid rgba(255,181,0,.25);
+  border-bottom: 1px solid rgba(230,74,25,.12);
+  padding: 14px 18px 16px;
+}
+.share-predict-head {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--secondary);
+  margin-bottom: 6px;
+}
+.share-predict-icon {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(0,77,64,.12);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; flex-shrink: 0;
+}
 .share-slogan {
-  font-size: 16px; font-weight: 800; line-height: 1.45;
-  margin-bottom: 16px; padding: 0 4px;
+  font-size: 17px; font-weight: 800; line-height: 1.45;
+  color: var(--on-surface); text-align: left;
 }
 .share-slogan em {
-  font-style: normal; color: #FFB500;
-}
-.share-banner {
-  width: 100%; height: 120px; border-radius: 12px;
-  object-fit: cover; display: block;
-  box-shadow: 0 4px 16px rgba(0,0,0,.25);
-  margin-bottom: 18px;
+  font-style: normal; color: var(--primary);
 }
 .share-footer {
-  background: #fff; padding: 16px 20px 20px;
-  display: flex; align-items: center; gap: 14px;
+  position: relative; background: var(--surface-container);
+  padding: 20px 18px 16px; text-align: center;
+  overflow: hidden;
+}
+.share-ball-deco {
+  position: absolute; right: -16px; bottom: -20px;
+  font-size: 96px; color: var(--secondary);
+  opacity: .06; pointer-events: none; line-height: 1;
 }
 .share-qr {
-  width: 88px; height: 88px; flex-shrink: 0;
-  border-radius: 8px; border: 1px solid #ECEEF2;
-  background: #fff; padding: 4px;
+  width: 108px; height: 108px; margin: 0 auto 12px;
+  border-radius: var(--radius-selection);
+  border: 2px solid var(--secondary);
+  background: var(--surface-container); padding: 6px;
+  position: relative; z-index: 1;
 }
-.share-qr img { width: 100%; height: 100%; display: block; border-radius: 4px; }
+.share-qr img { width: 100%; height: 100%; display: block; border-radius: 6px; }
 .share-qr-tip {
-  flex: 1; text-align: left;
-  font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.5;
+  position: relative; z-index: 1;
+  font-size: 15px; font-weight: 800; color: var(--secondary); line-height: 1.45;
 }
-.share-qr-tip span { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-top: 4px; }
+.share-qr-tip span {
+  display: block; font-size: 12px; font-weight: 500;
+  color: var(--on-surface-variant); margin-top: 4px;
+}
+.share-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 18px 12px;
+  background: linear-gradient(160deg, var(--secondary) 0%, #003830 100%);
+  font-size: 10px; font-weight: 500; color: rgba(255,255,255,.55);
+}
 
 /* ===== TOPIC BANNER ===== */
 .topic-banner {
@@ -896,20 +982,46 @@ body.demo-mode .demo-back { display: block; }
 <div class="modal-mask" id="shareModal">
   <div class="share-modal-card">
     <button type="button" class="modal-close" onclick="closeShareModal()" aria-label="关闭">&#215;</button>
-    <div class="share-poster">
-      <div class="share-user">
-        <div class="share-avatar" id="shareAvatar">😎</div>
-        <div class="share-nickname" id="shareNickname">球迷达人</div>
+    <div class="share-header">
+      <div class="share-event-tag">🏆 2026 FIFA WORLD CUP</div>
+      <div class="share-title">世界杯预言家</div>
+      <div class="share-badge">🎁 猜胜负，赢好礼</div>
+    </div>
+    <div class="share-match">
+      <div class="share-category" id="shareCategory">A组 小组赛 第1轮</div>
+      <div class="share-matchup" id="shareMatchup">
+        <div class="share-team-col">
+          <div class="share-flag-box">🇶🇦</div>
+          <div class="share-team-name">卡塔尔</div>
+        </div>
+        <div class="share-vs-col">
+          <span class="share-vs">VS</span>
+          <span class="share-kickoff" id="shareKickoff">今日 21:00</span>
+        </div>
+        <div class="share-team-col">
+          <div class="share-flag-box">🇪🇨</div>
+          <div class="share-team-name">厄瓜多尔</div>
+        </div>
       </div>
-      <div class="share-slogan" id="shareSlogan">我支持了<em>厄瓜多尔</em>，你支持哪个？</div>
-      <img class="share-banner" id="shareBanner" src="assets/banner-qatar.png" alt="世界杯预言家活动宣传">
+    </div>
+    <div class="share-predict">
+      <div class="share-predict-head">
+        <span class="share-predict-icon">⚡</span>
+        <span>我的预测</span>
+      </div>
+      <div class="share-slogan" id="shareSlogan">我支持了<em>「厄瓜多尔」</em>，你呢？</div>
     </div>
     <div class="share-footer">
       <div class="share-qr"><img id="shareQr" src="" alt="活动二维码"></div>
       <div class="share-qr-tip">
         扫一扫，参与活动
-        <span>猜胜负，赢好礼</span>
+        <span>加入预测，赢取丰厚好礼！</span>
       </div>
+      <div class="share-ball-deco" aria-hidden="true">⚽</div>
+    </div>
+    <div class="share-bottom">
+      <span>© 2026 World Cup Predictor</span>
+      <span id="shareDeadline">截止今日 21:00</span>
     </div>
   </div>
 </div>
@@ -1155,8 +1267,8 @@ function renderCoinBar() {
         <button type="button" class="coin-act-btn" onclick="showRecordsModal()">
           <span class="coin-act-icon">📋</span>竞猜记录
         </button>
-        <button type="button" class="coin-act-btn" onclick="showToast('✅','签到赚南瓜',false)">
-          <span class="coin-act-icon">🎃</span>签到赚南瓜
+        <button type="button" class="coin-act-btn" onclick="showToast('✅','赚南瓜',false)">
+          <span class="coin-act-icon">🎃</span>赚南瓜
         </button>
       </div>`;
   }
@@ -1173,7 +1285,7 @@ function buildMarquee() {
   if (!track) return;
   const itemHTML = f => `
     <span class="mq-item">
-      <span class="mq-text">${f.u}支持了${f.country}</span>
+      <span class="mq-text">${f.u}支持了<span class="mq-country">${f.country}</span></span>
     </span>`;
   // 重复一份，实现无缝循环
   const html = feeds.map(itemHTML).join('');
@@ -1499,18 +1611,47 @@ function getShareQrUrl(url) {
   return `https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=0&data=${encodeURIComponent(url)}`;
 }
 
+function formatShareCategory(category) {
+  if (!category) return '';
+  const hit = category.match(/小组赛([A-H])组第(\d+)轮/);
+  if (hit) return `${hit[1]}组 小组赛 第${hit[2]}轮`;
+  return category;
+}
+
+function formatShareKickoff(m) {
+  if (m.deadline && m.deadline !== '已截止') {
+    return m.deadline.startsWith('今天') ? m.deadline.replace('今天', '今日') : m.deadline;
+  }
+  if (m.kickoff) {
+    const d = new Date(m.kickoff);
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    return `${hh}:${mm}`;
+  }
+  return '';
+}
+
+function formatShareDeadline(deadline) {
+  if (!deadline || deadline === '已截止') return '竞猜已截止';
+  if (deadline.startsWith('今天')) return '截止' + deadline.replace('今天', '今日');
+  return '截止' + deadline;
+}
+
 function showSharePoster(matchId) {
   const m = matches.find(x => x.id === matchId);
   const voted = state.votes[matchId];
   if (!m || !voted) return;
 
   const teamName = pickName(m, voted.pick);
-  const user = state.user || { avatar: '😎', nickname: '球迷达人' };
 
-  document.getElementById('shareAvatar').textContent = user.avatar;
-  document.getElementById('shareNickname').textContent = user.nickname;
+  document.getElementById('shareCategory').textContent = formatShareCategory(m.category);
+  document.getElementById('shareMatchup').innerHTML =
+    `<div class="share-team-col"><div class="share-flag-box">${m.teamA.f}</div><div class="share-team-name">${m.teamA.n}</div></div>` +
+    `<div class="share-vs-col"><span class="share-vs">VS</span><span class="share-kickoff" id="shareKickoff">${formatShareKickoff(m)}</span></div>` +
+    `<div class="share-team-col"><div class="share-flag-box">${m.teamB.f}</div><div class="share-team-name">${m.teamB.n}</div></div>`;
   document.getElementById('shareSlogan').innerHTML =
-    `我支持了<em>${teamName}</em>，你支持哪个？`;
+    `我支持了<em>「${teamName}」</em>，你呢？`;
+  document.getElementById('shareDeadline').textContent = formatShareDeadline(m.deadline);
   document.getElementById('shareQr').src = getShareQrUrl(state.shareUrl);
   document.getElementById('shareModal').classList.add('show');
 }
