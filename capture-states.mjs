@@ -16,6 +16,7 @@ const shots = [
   { file: '07-已开奖已参与猜错-巴西.png',        query: 'demo=1&login=1&slide=5' },
   { file: '08-已开奖已参与猜中-葡萄牙.png',      query: 'demo=1&login=1&slide=6' },
   { file: '09-参与成功弹窗.png',                 query: 'demo=1&login=1&slide=0&modal=join' },
+  { file: '13-参与成功弹窗2.png',                query: 'demo=1&login=1&slide=0&modal=join2' },
   { file: '10-活动规则弹窗.png',                 query: 'demo=1&login=1&modal=rules' },
   { file: '11-竞猜记录弹窗.png',               query: 'demo=1&login=1&modal=records' },
   { file: '12-分享海报弹窗.png',               query: 'demo=1&login=1&modal=share&match=m1' },
