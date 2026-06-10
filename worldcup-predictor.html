@@ -739,6 +739,21 @@ html, body {
   box-shadow: 0 4px 14px rgba(0,201,167,.35); transition: transform .1s;
 }
 .modal-btn:active { transform: scale(.97); }
+.modal-btn-outline {
+  width: 100%; height: 46px; margin-top: 10px;
+  border: 1px solid var(--surface-dim); border-radius: 23px;
+  background: var(--surface-container); color: var(--on-surface-variant);
+  font-size: 16px; font-weight: 600; cursor: pointer;
+  transition: transform .1s, opacity .1s;
+}
+.modal-btn-outline:active { transform: scale(.97); opacity: .75; }
+.modal-switch-btn {
+  position: absolute; top: 12px; left: 14px;
+  border: none; background: none; padding: 0;
+  font-size: 12px; font-weight: 600; color: var(--secondary);
+  cursor: pointer; line-height: 1.2;
+}
+.modal-switch-btn:active { opacity: .65; }
 .modal-body {
   font-size: 14px; color: #555; line-height: 1.65;
   text-align: left; margin: 14px 0 22px;
@@ -961,11 +976,24 @@ body.demo-mode .demo-back { display: block; }
 <!-- 参与成功弹窗 -->
 <div class="modal-mask" id="joinModal">
   <div class="modal-card">
+    <button type="button" class="modal-switch-btn" onclick="switchToJoinModal2()">切换弹窗2</button>
     <button type="button" class="modal-close" onclick="closeJoinModal()" aria-label="关闭">&#215;</button>
     <div class="modal-emoji">🎉</div>
     <div class="modal-title">参与成功，预言待揭晓</div>
     <div class="modal-sub">建议打开app系统通知，不错过结果通知！</div>
     <button type="button" class="modal-btn" onclick="enableAppNotice()">打开 App 通知</button>
+  </div>
+</div>
+
+<!-- 参与成功弹窗2 -->
+<div class="modal-mask" id="joinModal2">
+  <div class="modal-card">
+    <button type="button" class="modal-close" onclick="closeJoinModal2()" aria-label="关闭">&#215;</button>
+    <div class="modal-emoji">🎉</div>
+    <div class="modal-title">参与成功，预言待揭晓</div>
+    <div class="modal-sub">快分享给好友一起参与吧！</div>
+    <button type="button" class="modal-btn" onclick="shareFromJoinModal2()">分享好友</button>
+    <button type="button" class="modal-btn-outline" onclick="closeJoinModal2()">取消</button>
   </div>
 </div>
 
@@ -1184,8 +1212,8 @@ function buildStatesGallery() {
   grid.innerHTML = STATE_SHOTS.map(s => `
     <div class="sg-item">
       <div class="sg-label">${s.label}</div>
-      <a class="sg-phone" href="screenshots/${s.file}?v=4" target="_blank" rel="noopener">
-        <img src="screenshots/${s.file}?v=4" alt="${s.label}" loading="lazy">
+      <a class="sg-phone" href="screenshots/${s.file}?v=5" target="_blank" rel="noopener">
+        <img src="screenshots/${s.file}?v=5" alt="${s.label}" loading="lazy">
       </a>
     </div>`).join('');
 }
@@ -1217,6 +1245,7 @@ function applyCaptureParams() {
   }
   const modal = p.get('modal');
   if (modal === 'join') showJoinModal();
+  if (modal === 'join2') showJoinModal2();
   if (modal === 'rules') showRules();
   if (modal === 'records') showRecordsModal();
   if (modal === 'share') {
@@ -1549,20 +1578,44 @@ function buildResultStatus(m, voted) {
   return box;
 }
 
+let lastJoinMatchId = 'm3';
+
 function castVote(id, pick) {
   const m = matches.find(x => x.id === id);
   if (!m || m.status !== 'open') return;
   state.votes[id] = { pick };
+  lastJoinMatchId = id;
   renderMatchList();
   showJoinModal();
 }
 
 // ==================== 参与成功弹窗 ====================
+function getJoinShareMatchId() {
+  if (lastJoinMatchId && state.votes[lastJoinMatchId]) return lastJoinMatchId;
+  const voted = matches.find(m => state.votes[m.id]);
+  return voted ? voted.id : matches[currentSlide]?.id;
+}
+
 function showJoinModal() {
   document.getElementById('joinModal').classList.add('show');
 }
 function closeJoinModal() {
   document.getElementById('joinModal').classList.remove('show');
+}
+function showJoinModal2() {
+  document.getElementById('joinModal2').classList.add('show');
+}
+function closeJoinModal2() {
+  document.getElementById('joinModal2').classList.remove('show');
+}
+function switchToJoinModal2() {
+  closeJoinModal();
+  showJoinModal2();
+}
+function shareFromJoinModal2() {
+  closeJoinModal2();
+  const matchId = getJoinShareMatchId();
+  if (matchId) showSharePoster(matchId);
 }
 function enableAppNotice() {
   closeJoinModal();
@@ -1595,7 +1648,7 @@ function showRecordsModal() {
     const res = getRecordResultText(r.outcome);
     return `
       <div class="records-item">
-        <span class="records-match">${r.teamA}：${r.teamB}</span>
+        <span class="records-match">${r.teamA} VS ${r.teamB}</span>
         <span class="records-time">${formatRecordTime(r.kickoff)}</span>
         <span class="records-result ${res.cls}">${res.text}</span>
       </div>`;
