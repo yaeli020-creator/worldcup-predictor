@@ -274,7 +274,7 @@ html, body {
   background: var(--card);
   border-radius: var(--radius);
   box-shadow: 0 2px 12px rgba(0,0,0,.07);
-  overflow: hidden;
+  overflow: visible;
   transition: opacity .3s, transform .3s;
 }
 .match-card.peek {                /* 非当前卡片：缩小并淡化，提示可滑动 */
@@ -282,23 +282,28 @@ html, body {
   transform: scale(.96);
 }
 .mc-category {
-  text-align: center; font-size: 12px; font-weight: 600;
-  color: var(--muted); padding: 14px 12px 0;
-  letter-spacing: .2px;
+  font-size: 13px; font-weight: 700;
+  color: var(--text); letter-spacing: .2px;
 }
+.mc-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 14px 12px 10px;
+}
+.mc-head .mc-category { flex: 1; min-width: 0; }
 .mc-deadline {
-  text-align: center; font-size: 14px; font-weight: 800;
-  color: var(--teal-dark);
-  background: rgba(0,201,167,.12);
-  margin: 10px 12px 14px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  letter-spacing: .3px;
+  flex-shrink: 0;
+  font-size: 11px; font-weight: 700; line-height: 1.3;
+  color: #C62828;
+  background: rgba(255,112,67,.14);
+  padding: 5px 10px;
+  border-radius: 999px;
+  letter-spacing: 0;
+  text-align: center;
 }
 .mc-deadline.ended,
 .mc-deadline.locked {
   color: #666;
-  background: rgba(26,26,46,.06);
+  background: rgba(26,26,46,.08);
 }
 /* 底部加一点呼吸空间（去掉 footer 后） */
 .match-card { padding-bottom: 6px; }
@@ -313,7 +318,7 @@ html, body {
 /* Teams VS row */
 .teams-vs {
   display: flex; align-items: center; justify-content: center;
-  gap: 20px; padding: 0 24px 20px;
+  gap: 20px; padding: 4px 24px 16px;
 }
 .tv-team { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .tv-flag {
@@ -342,40 +347,34 @@ html, body {
   box-shadow: 0 2px 6px rgba(0,201,167,.35);
 }
 
-/* Vote buttons — BEFORE vote */
-.vote-row { display: flex; gap: 8px; padding: 0 12px 6px; }
+/* Vote buttons */
+.vote-row { display: flex; gap: 8px; padding: 8px 12px 10px; }
 .vote-pill-btn {
-  flex: 1; border-radius: 12px; border: none; cursor: pointer;
-  padding: 11px 6px 9px;
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  transition: transform .12s, box-shadow .12s;
+  flex: 1; position: relative;
+  border-radius: 10px; border: 1px solid #E4E6EB;
+  background: #fff; cursor: pointer;
+  padding: 12px 6px 10px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  transition: transform .12s, border-color .12s;
+  overflow: visible;
 }
-.vote-pill-btn:active { transform: scale(.96); }
-.vpb-a { background: var(--teal-dark); }   /* 深青绿 */
-.vpb-d { background: var(--teal); }         /* 主色青绿 */
-.vpb-b { background: var(--pink); }         /* 暖橙红 */
-.vpb-name { font-size: 14px; font-weight: 800; color: #fff; }
-.vpb-mult { font-size: 12px; color: rgba(255,255,255,.9); font-weight: 500; }
+.vote-pill-btn:active { transform: scale(.98); }
+.vote-pill-btn.vote-selected {
+  border: 2px solid var(--pink);
+  padding: 11px 5px 9px;
+}
+.vpb-name { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.vpb-mult { font-size: 12px; color: var(--muted); font-weight: 500; }
+.vote-pill-btn.vote-selected .vpb-name { color: var(--pink); font-weight: 800; }
 
-/* Vote pct row */
-.pct-row { display: flex; gap: 8px; padding: 4px 12px 16px; justify-content: center; }
-.pct-item { flex: 1; text-align: center; font-size: 12px; color: var(--muted); }
-.pct-item.sel-pct { color: var(--text); font-weight: 700; }
-
-/* After vote — revealed */
-.vote-pill-btn.revealed-a { background: rgba(10,122,133,.1); border: 2px solid var(--teal-dark); }
-.vote-pill-btn.revealed-d { background: rgba(0,201,167,.1); border: 2px solid var(--teal); }
-.vote-pill-btn.revealed-b { background: rgba(255,112,67,.1); border: 2px solid var(--pink); }
-.vote-pill-btn.selected-a { background: var(--teal-dark); box-shadow: 0 4px 14px rgba(10,122,133,.4); }
-.vote-pill-btn.selected-d { background: var(--teal); box-shadow: 0 4px 14px rgba(0,201,167,.4); }
-.vote-pill-btn.selected-b { background: var(--pink); box-shadow: 0 4px 14px rgba(255,112,67,.4); }
-.vote-pill-btn.correct-result { background: var(--teal); }
-.vote-pill-btn.revealed-a .vpb-name { color: var(--teal-dark); }
-.vote-pill-btn.revealed-d .vpb-name { color: var(--teal); }
-.vote-pill-btn.revealed-b .vpb-name { color: var(--pink); }
-.vote-pill-btn.revealed-a .vpb-mult,
-.vote-pill-btn.revealed-d .vpb-mult,
-.vote-pill-btn.revealed-b .vpb-mult { color: var(--muted); font-weight: 500; }
+/* 已选角标 */
+.vpb-tag {
+  position: absolute; top: -7px; right: -5px;
+  font-size: 10px; font-weight: 800; line-height: 1;
+  padding: 3px 6px; border-radius: 6px;
+  background: var(--pink); color: #fff;
+  box-shadow: 0 2px 4px rgba(255,112,67,.25);
+}
 
 /* Card footer */
 .mc-footer {
@@ -399,7 +398,7 @@ html, body {
 
 /* ===== RESULT STATUS (参与后状态) ===== */
 .result-status {
-  margin: 6px 12px 4px;
+  margin: 4px 12px 12px;
   border-radius: 12px;
   padding: 12px 14px;
   display: flex; align-items: center; gap: 12px;
@@ -418,12 +417,84 @@ html, body {
 .result-status.win .rs-icon { background: rgba(255,181,0,.25); }
 .result-status.lose .rs-icon { background: rgba(26,26,46,.08); }
 .rs-info { flex: 1; min-width: 0; }
+.rs-body {
+  flex: 1; min-width: 0;
+  display: flex; align-items: center; gap: 10px;
+}
+.rs-body-share .rs-info { max-width: 62%; }
 .rs-title { font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.3; }
 .result-status.pending .rs-title { color: var(--teal-dark); }
 .result-status.win .rs-title { color: #C77800; }
 .result-status.lose .rs-title { color: #555; }
+.rs-share-btn {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: 3px;
+  padding: 4px 9px; margin-left: auto;
+  border: 1px solid var(--pink); border-radius: 999px;
+  background: transparent;
+  font-size: 11px; font-weight: 700; color: var(--pink);
+  cursor: pointer; line-height: 1; white-space: nowrap;
+}
+.rs-share-btn:active { opacity: .65; }
+.rs-share-btn svg { width: 11px; height: 11px; flex-shrink: 0; }
 .rs-desc { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.35; }
 .rs-desc b { color: var(--text); font-weight: 700; }
+
+/* ===== 分享海报弹窗 ===== */
+.share-modal-card {
+  width: 300px; max-width: 90%;
+  background: #fff; border-radius: 20px;
+  padding: 0; overflow: hidden;
+  position: relative;
+  transform: scale(.85); transition: transform .28s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 16px 48px rgba(0,0,0,.28);
+}
+.modal-mask.show .share-modal-card { transform: scale(1); }
+.share-modal-card .modal-close { color: rgba(255,255,255,.85); z-index: 2; }
+.share-poster {
+  background: linear-gradient(160deg, #0A7A85 0%, #093550 100%);
+  padding: 24px 20px 20px; text-align: center; color: #fff;
+}
+.share-user {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.share-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,.35);
+}
+.share-nickname { font-size: 15px; font-weight: 800; }
+.share-slogan {
+  font-size: 16px; font-weight: 800; line-height: 1.45;
+  margin-bottom: 16px; padding: 0 4px;
+}
+.share-slogan em {
+  font-style: normal; color: #FFB500;
+}
+.share-banner {
+  width: 100%; height: 120px; border-radius: 12px;
+  object-fit: cover; display: block;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+  margin-bottom: 18px;
+}
+.share-footer {
+  background: #fff; padding: 16px 20px 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.share-qr {
+  width: 88px; height: 88px; flex-shrink: 0;
+  border-radius: 8px; border: 1px solid #ECEEF2;
+  background: #fff; padding: 4px;
+}
+.share-qr img { width: 100%; height: 100%; display: block; border-radius: 4px; }
+.share-qr-tip {
+  flex: 1; text-align: left;
+  font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.5;
+}
+.share-qr-tip span { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-top: 4px; }
 
 /* ===== TOPIC BANNER ===== */
 .topic-banner {
@@ -499,18 +570,6 @@ html, body {
   font-size: 12px; font-weight: 800; color: #C77800;
   line-height: 1.2;
 }
-
-/* ===== 已选标签 ===== */
-.vpb-tag {
-  display: inline-block; margin-left: 4px;
-  font-size: 10px; font-weight: 800; line-height: 1;
-  padding: 2px 5px; border-radius: 6px;
-  background: rgba(255,255,255,.9); color: var(--teal-dark);
-  vertical-align: middle;
-}
-.vote-pill-btn.selected-a .vpb-tag,
-.vote-pill-btn.selected-d .vpb-tag,
-.vote-pill-btn.selected-b .vpb-tag { background: #fff; }
 
 /* ===== 参与成功弹窗 ===== */
 .modal-mask {
@@ -786,6 +845,28 @@ body.demo-mode .demo-back { display: block; }
   </div>
 </div>
 
+<!-- 分享海报弹窗 -->
+<div class="modal-mask" id="shareModal">
+  <div class="share-modal-card">
+    <button type="button" class="modal-close" onclick="closeShareModal()" aria-label="关闭">&#215;</button>
+    <div class="share-poster">
+      <div class="share-user">
+        <div class="share-avatar" id="shareAvatar">😎</div>
+        <div class="share-nickname" id="shareNickname">球迷达人</div>
+      </div>
+      <div class="share-slogan" id="shareSlogan">我支持了<em>厄瓜多尔</em>，你支持哪个？</div>
+      <img class="share-banner" id="shareBanner" src="assets/banner-qatar.png" alt="世界杯预言家活动宣传">
+    </div>
+    <div class="share-footer">
+      <div class="share-qr"><img id="shareQr" src="" alt="活动二维码"></div>
+      <div class="share-qr-tip">
+        扫一扫，参与活动
+        <span>猜胜负，赢好礼</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast">
   <div class="t-main" id="tMain">+50</div>
@@ -799,6 +880,8 @@ let state = {
   loggedIn: false,     // true = 已登录，false = 未登录
   pumpkinPts: 2680,
   correct: 3,
+  user: { avatar: '😎', nickname: '球迷达人' },
+  shareUrl: 'https://yaeli020-creator.github.io/worldcup-predictor/worldcup-predictor.html',
   votes: {
     m1: { pick: 'B' },   // 待开奖·已参与
     m7: { pick: 'A' },   // 已锁盘·已参与
@@ -976,6 +1059,10 @@ function applyCaptureParams() {
   if (modal === 'join') showJoinModal();
   if (modal === 'rules') showRules();
   if (modal === 'records') showRecordsModal();
+  if (modal === 'share') {
+    const matchId = p.get('match') || 'm1';
+    showSharePoster(matchId);
+  }
 }
 
 function showRules() {
@@ -1164,8 +1251,8 @@ function buildMatchCard(m) {
     : `竞猜截止：${m.deadline}`;
   const categoryHtml = m.category
     ? `<div class="mc-category">${m.category}</div>`
-    : '';
-  card.innerHTML = `${categoryHtml}<div class="${deadlineCls}">${deadlineText}</div>`;
+    : '<div class="mc-category"></div>';
+  card.innerHTML = `<div class="mc-head">${categoryHtml}<div class="${deadlineCls}">${deadlineText}</div></div>`;
 
   // Teams VS
   const tv = document.createElement('div');
@@ -1192,11 +1279,10 @@ function buildMatchCard(m) {
 
   // Vote buttons
   const opts = [
-    {key:'A', name:m.teamA.n, mult:m.mults.A, pct:m.pcts.A, baseClass:'vpb-a', selClass:'selected-a', revClass:'revealed-a', corClass:'correct-result'},
-    {key:'D', name:'平局',     mult:m.mults.D, pct:m.pcts.D, baseClass:'vpb-d', selClass:'selected-d', revClass:'revealed-d', corClass:'correct-result'},
-    {key:'B', name:m.teamB.n, mult:m.mults.B, pct:m.pcts.B, baseClass:'vpb-b', selClass:'selected-b', revClass:'revealed-b', corClass:'correct-result'},
+    {key:'A', name:m.teamA.n, pct:m.pcts.A},
+    {key:'D', name:'平局',     pct:m.pcts.D},
+    {key:'B', name:m.teamB.n, pct:m.pcts.B},
   ];
-  // 淘汰赛只有两个选项（去掉平局）for locked/ended demonstration keep 3
 
   const voteRow = document.createElement('div');
   voteRow.className = 'vote-row';
@@ -1205,7 +1291,7 @@ function buildMatchCard(m) {
   if (canVote) {
     opts.forEach(o => {
       const btn = document.createElement('button');
-      btn.className = `vote-pill-btn ${o.baseClass}`;
+      btn.className = 'vote-pill-btn';
       btn.innerHTML = `<span class="vpb-name">${o.name}</span><span class="vpb-mult">${o.pct}%用户选</span>`;
       btn.onclick = () => castVote(m.id, o.key);
       voteRow.appendChild(btn);
@@ -1214,11 +1300,12 @@ function buildMatchCard(m) {
     opts.forEach(o => {
       const isSel = voted && o.key === voted.pick;
       const btn = document.createElement('div');
-      btn.className = `vote-pill-btn ${isSel ? o.selClass : o.revClass}`;
+      btn.className = `vote-pill-btn${isSel ? ' vote-selected' : ''}`;
       btn.style.cursor = 'default';
       const tag = isSel ? '<span class="vpb-tag">已选</span>' : '';
       btn.innerHTML = `
-        <span class="vpb-name">${o.name}${tag}</span>
+        ${tag}
+        <span class="vpb-name">${o.name}</span>
         <span class="vpb-mult">${o.pct}%用户选</span>
       `;
       voteRow.appendChild(btn);
@@ -1290,9 +1377,15 @@ function buildResultStatus(m, voted) {
     box.className = 'result-status pending';
     box.innerHTML = `
       <div class="rs-icon">⏳</div>
-      <div class="rs-info">
-        <div class="rs-title">等待开赛</div>
-        <div class="rs-desc">你选择了“<b>${name}</b>”，猜对可获得${reward}南瓜</div>
+      <div class="rs-body rs-body-share">
+        <div class="rs-info">
+          <div class="rs-title">等待开赛</div>
+          <div class="rs-desc">你选择了“<b>${name}</b>”，猜对可获得${reward}南瓜</div>
+        </div>
+        <button type="button" class="rs-share-btn" onclick="showSharePoster('${m.id}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>
+          分享
+        </button>
       </div>
     `;
   }
@@ -1355,6 +1448,31 @@ function showRecordsModal() {
 
 function closeRecordsModal() {
   document.getElementById('recordsModal').classList.remove('show');
+}
+
+// ==================== 分享海报弹窗 ====================
+function getShareQrUrl(url) {
+  return `https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=0&data=${encodeURIComponent(url)}`;
+}
+
+function showSharePoster(matchId) {
+  const m = matches.find(x => x.id === matchId);
+  const voted = state.votes[matchId];
+  if (!m || !voted) return;
+
+  const teamName = pickName(m, voted.pick);
+  const user = state.user || { avatar: '😎', nickname: '球迷达人' };
+
+  document.getElementById('shareAvatar').textContent = user.avatar;
+  document.getElementById('shareNickname').textContent = user.nickname;
+  document.getElementById('shareSlogan').innerHTML =
+    `我支持了<em>${teamName}</em>，你支持哪个？`;
+  document.getElementById('shareQr').src = getShareQrUrl(state.shareUrl);
+  document.getElementById('shareModal').classList.add('show');
+}
+
+function closeShareModal() {
+  document.getElementById('shareModal').classList.remove('show');
 }
 
 function updateDisplay() {
